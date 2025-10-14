@@ -3,6 +3,146 @@
 import { MIN_SELECTION_LENGTH, MAX_SELECTION_LENGTH } from './constants';
 
 /**
+ * Logger utility for consistent logging across the extension
+ * Adds [Stupify] prefix and colors for easy filtering in DevTools
+ */
+export const logger = {
+  /**
+   * Log informational messages (purple in console)
+   */
+  info: (...args: any[]): void => {
+    if (isDevelopment() || shouldLog('info')) {
+      console.log(
+        '%c[Stupify]%c',
+        'color: #8b5cf6; font-weight: bold;',
+        'color: inherit;',
+        ...args
+      );
+    }
+  },
+
+  /**
+   * Log debug messages (gray in console, only in dev mode)
+   */
+  debug: (...args: any[]): void => {
+    if (isDevelopment() || shouldLog('debug')) {
+      console.debug(
+        '%c[Stupify Debug]%c',
+        'color: #6b7280; font-weight: bold;',
+        'color: inherit;',
+        ...args
+      );
+    }
+  },
+
+  /**
+   * Log warnings (orange in console)
+   */
+  warn: (...args: any[]): void => {
+    if (shouldLog('warn')) {
+      console.warn(
+        '%c[Stupify Warning]%c',
+        'color: #f59e0b; font-weight: bold;',
+        'color: inherit;',
+        ...args
+      );
+    }
+  },
+
+  /**
+   * Log errors (red in console)
+   */
+  error: (...args: any[]): void => {
+    if (shouldLog('error')) {
+      console.error(
+        '%c[Stupify Error]%c',
+        'color: #ef4444; font-weight: bold;',
+        'color: inherit;',
+        ...args
+      );
+    }
+  },
+
+  /**
+   * Log success messages (green in console)
+   */
+  success: (...args: any[]): void => {
+    if (isDevelopment() || shouldLog('info')) {
+      console.log(
+        '%c[Stupify Success]%c',
+        'color: #10b981; font-weight: bold;',
+        'color: inherit;',
+        ...args
+      );
+    }
+  },
+
+  /**
+   * Group related logs together
+   */
+  group: (label: string, collapsed = false): void => {
+    if (isDevelopment() || shouldLog('info')) {
+      if (collapsed) {
+        console.groupCollapsed(`%c[Stupify] ${label}`, 'color: #8b5cf6; font-weight: bold;');
+      } else {
+        console.group(`%c[Stupify] ${label}`, 'color: #8b5cf6; font-weight: bold;');
+      }
+    }
+  },
+
+  /**
+   * End a log group
+   */
+  groupEnd: (): void => {
+    if (isDevelopment() || shouldLog('info')) {
+      console.groupEnd();
+    }
+  },
+
+  /**
+   * Log a table (useful for arrays of objects)
+   */
+  table: (data: any): void => {
+    if (isDevelopment() || shouldLog('info')) {
+      console.log('%c[Stupify Table]', 'color: #8b5cf6; font-weight: bold;');
+      console.table(data);
+    }
+  },
+
+  /**
+   * Start a timer
+   */
+  time: (label: string): void => {
+    if (isDevelopment()) {
+      console.time(`[Stupify] ${label}`);
+    }
+  },
+
+  /**
+   * End a timer and log the duration
+   */
+  timeEnd: (label: string): void => {
+    if (isDevelopment()) {
+      console.timeEnd(`[Stupify] ${label}`);
+    }
+  },
+};
+
+/**
+ * Determines if a log level should be shown
+ */
+function shouldLog(level: 'info' | 'debug' | 'warn' | 'error'): boolean {
+  // Always show warnings and errors
+  if (level === 'warn' || level === 'error') return true;
+  
+  // In development, show everything
+  if (isDevelopment()) return true;
+  
+  // In production, only show info and above (not debug)
+  return level !== 'debug';
+}
+
+/**
  * Validates selected text length
  */
 export function isValidSelection(text: string): boolean {

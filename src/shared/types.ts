@@ -103,6 +103,76 @@ export interface SelectionData {
   y: number;
 }
 
+// This is the base interface for all Chrome extension messages
+export interface ChromeMessage {
+  type: string;
+  payload?: any;
+}
+
+// Specific message types for better type safety
+export type ChromeMessageType =
+  | 'OPEN_SIDE_PANEL'
+  | 'CONTEXT_MENU_CLICKED'
+  | 'GET_CURRENT_SELECTION'
+  | 'TRACK_EVENT'
+  | 'GET_AUTH_STATE'
+  | 'SET_AUTH_STATE'
+  | 'CLEAR_AUTH_STATE'
+  | 'AUTH_STATUS'
+  | 'USAGE_UPDATE'
+  | 'ACHIEVEMENT_UNLOCKED'
+  | 'STREAK_UPDATE';
+
+export interface OpenSidePanelMessage extends ChromeMessage {
+  type: 'OPEN_SIDE_PANEL';
+  payload: {
+    text: string;
+    trigger: 'keyboard_shortcut' | 'context_menu';
+  };
+}
+
+export interface ContextMenuClickedMessage extends ChromeMessage {
+  type: 'CONTEXT_MENU_CLICKED';
+  payload: {
+    text: string;
+  };
+}
+
+export interface GetCurrentSelectionMessage extends ChromeMessage {
+  type: 'GET_CURRENT_SELECTION';
+}
+
+export interface TrackEventMessage extends ChromeMessage {
+  type: 'TRACK_EVENT';
+  payload: {
+    event: string;
+    properties?: Record<string, any>;
+  };
+}
+
+export interface GetAuthStateMessage extends ChromeMessage {
+  type: 'GET_AUTH_STATE';
+}
+
+export interface SetAuthStateMessage extends ChromeMessage {
+  type: 'SET_AUTH_STATE';
+  payload: any;
+}
+
+export interface ClearAuthStateMessage extends ChromeMessage {
+  type: 'CLEAR_AUTH_STATE';
+}
+
+// Union type for all Chrome messages
+export type AnyChromeMessage =
+  | OpenSidePanelMessage
+  | ContextMenuClickedMessage
+  | GetCurrentSelectionMessage
+  | TrackEventMessage
+  | GetAuthStateMessage
+  | SetAuthStateMessage
+  | ClearAuthStateMessage;
+
 export interface MessageFromBackground {
   type: 'AUTH_STATUS' | 'USAGE_UPDATE' | 'ACHIEVEMENT_UNLOCKED' | 'STREAK_UPDATE';
   payload: any;
