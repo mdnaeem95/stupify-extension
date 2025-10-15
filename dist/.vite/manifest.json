@@ -24,8 +24,8 @@
       "_utils-BvHapBx2.js"
     ]
   },
-  "_index-QaMYr3na.js": {
-    "file": "assets/index-QaMYr3na.js",
+  "_index-fbBjbw29.js": {
+    "file": "assets/index-fbBjbw29.js",
     "name": "index",
     "imports": [
       "_globals-DrID7SY-.js"
@@ -36,7 +36,7 @@
     "name": "utils"
   },
   "content.ts-loader.js": {
-    "file": "assets/content.ts-loader-D2vlINzQ.js",
+    "file": "assets/content.ts-loader-DFZKRqO3.js",
     "src": "content.ts-loader.js"
   },
   "popup.html": {
@@ -51,17 +51,17 @@
     ]
   },
   "sidepanel.html": {
-    "file": "assets/sidepanel.html-D3-Akd9s.js",
+    "file": "assets/sidepanel.html-DAZjQfK7.js",
     "name": "sidepanel.html",
     "src": "sidepanel.html",
     "isEntry": true,
     "imports": [
       "_globals-DrID7SY-.js",
-      "_index-QaMYr3na.js"
+      "_index-fbBjbw29.js"
     ]
   },
   "src/background/service-worker.ts": {
-    "file": "assets/service-worker.ts-Dar3Toiz.js",
+    "file": "assets/service-worker.ts-Dmv8rSuZ.js",
     "name": "service-worker.ts",
     "src": "src/background/service-worker.ts",
     "isEntry": true,
@@ -70,7 +70,7 @@
     ]
   },
   "src/content/content.ts": {
-    "file": "assets/content.ts-C-xFKOMc.js",
+    "file": "assets/content.ts-CBkSlV4C.js",
     "name": "content.ts",
     "src": "src/content/content.ts",
     "isEntry": true,

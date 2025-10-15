@@ -39,12 +39,18 @@ class ApiClient {
 
   /**
    * Load tokens from chrome.storage
+   * FIXED: Load from nested 'auth' object
    */
   private async loadTokens(): Promise<void> {
     try {
-      const result = await chrome.storage.local.get(['accessToken', 'refreshToken']);
-      this.accessToken = result.accessToken || null;
-      this.refreshToken = result.refreshToken || null;
+      const { auth } = await chrome.storage.local.get('auth');
+      this.accessToken = auth?.accessToken || null;
+      this.refreshToken = auth?.refreshToken || null;
+      
+      console.log('🔑 Tokens loaded:', {
+        hasAccessToken: !!this.accessToken,
+        hasRefreshToken: !!this.refreshToken
+      });
     } catch (error) {
       console.error('❌ Failed to load tokens:', error);
     }
@@ -52,25 +58,37 @@ class ApiClient {
 
   /**
    * Save tokens to chrome.storage
+   * FIXED: Store in nested 'auth' object
    */
   private async saveTokens(accessToken: string, refreshToken: string): Promise<void> {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
     
+    // Get existing auth data (might have user info)
+    const { auth } = await chrome.storage.local.get('auth');
+    
+    // Update with new tokens
     await chrome.storage.local.set({
-      accessToken,
-      refreshToken,
+      auth: {
+        ...auth,  // Preserve any existing data (like user)
+        accessToken,
+        refreshToken,
+      }
     });
+    
+    console.log('✅ Tokens saved to storage');
   }
 
   /**
    * Clear tokens
+   * FIXED: Clear nested 'auth' object
    */
   private async clearTokens(): Promise<void> {
     this.accessToken = null;
     this.refreshToken = null;
     
-    await chrome.storage.local.remove(['accessToken', 'refreshToken', 'user']);
+    await chrome.storage.local.remove('auth');
+    console.log('✅ Tokens cleared from storage');
   }
 
   /**
@@ -254,12 +272,22 @@ class ApiClient {
       throw new Error('Invalid login response');
     }
 
-    await this.saveTokens(data.access_token, data.refresh_token);
+    // Save everything in one nested object
+    await chrome.storage.local.set({
+      auth: {
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+        user: data.user || null,
+      }
+    });
 
-    // Save user data
-    if (data.user) {
-      await chrome.storage.local.set({ user: data.user });
-    }
+    this.accessToken = data.access_token;
+    this.refreshToken = data.refresh_token;
+
+    console.log('✅ Login successful:', {
+      hasToken: !!this.accessToken,
+      user: data.user?.email
+    });
   }
 
   /**
@@ -286,12 +314,22 @@ class ApiClient {
       throw new Error('Invalid signup response');
     }
 
-    await this.saveTokens(data.access_token, data.refresh_token);
+    // Save everything in one nested object
+    await chrome.storage.local.set({
+      auth: {
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+        user: data.user || null,
+      }
+    });
 
-    // Save user data
-    if (data.user) {
-      await chrome.storage.local.set({ user: data.user });
-    }
+    this.accessToken = data.access_token;
+    this.refreshToken = data.refresh_token;
+
+    console.log('✅ Signup successful:', {
+      hasToken: !!this.accessToken,
+      user: data.user?.email
+    });
   }
 
   /**
@@ -320,8 +358,8 @@ class ApiClient {
    * Get current user
    */
   async getUser(): Promise<any> {
-    const result = await chrome.storage.local.get(['user']);
-    return result.user || null;
+    const { auth } = await chrome.storage.local.get('auth');
+    return auth?.user || null;
   }
 
   /**

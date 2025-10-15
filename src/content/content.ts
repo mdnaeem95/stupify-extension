@@ -24,11 +24,26 @@ const KEYBOARD_SHORTCUT = { key: 's', ctrlKey: true, shiftKey: true };
 let selectionHandler: SelectionHandler | null = null;
 
 /**
+ * Check if chrome.storage is available
+ */
+function isChromeStorageAvailable(): boolean {
+  return typeof chrome !== 'undefined' && 
+         chrome.storage !== undefined && 
+         chrome.storage.local !== undefined;
+}
+
+/**
  * Initialize the content script
  */
 function init(): void {
   try {
     logger.info('Content script initializing...');
+
+    // Verify chrome.storage is available
+    if (!isChromeStorageAvailable()) {
+      logger.error('chrome.storage is not available. Extension may not work correctly.');
+      // Continue initialization but with limited functionality
+    }
 
     // Create selection handler
     selectionHandler = new SelectionHandler({
@@ -56,31 +71,42 @@ function init(): void {
  * Handle text selection changes
  */
 function handleSelectionChange(selectedText: string): void {
-  // Validate selection length
-  if (selectedText.length < MIN_SELECTION_LENGTH) {
-    logger.debug('Selection too short, ignoring');
-    return;
+  try {
+    // Validate selection length
+    if (selectedText.length < MIN_SELECTION_LENGTH) {
+      logger.debug('Selection too short, ignoring');
+      return;
+    }
+
+    if (selectedText.length > MAX_SELECTION_LENGTH) {
+      logger.debug('Selection too long, truncating');
+      selectedText = selectedText.substring(0, MAX_SELECTION_LENGTH);
+    }
+
+    // Store current selection for context menu
+    // Check if chrome.storage is available before using it
+    if (isChromeStorageAvailable()) {
+      chrome.storage.local.set({
+        currentSelection: {
+          text: selectedText,
+          url: window.location.href,
+          domain: window.location.hostname,
+          timestamp: Date.now(),
+        },
+      }).catch((error) => {
+        logger.error('Failed to store selection:', error);
+      });
+
+      logger.debug('Selection stored:', {
+        length: selectedText.length,
+        domain: window.location.hostname,
+      });
+    } else {
+      logger.warn('chrome.storage not available, selection not stored');
+    }
+  } catch (error) {
+    logger.error('Failed to handle selection change:', error);
   }
-
-  if (selectedText.length > MAX_SELECTION_LENGTH) {
-    logger.debug('Selection too long, truncating');
-    selectedText = selectedText.substring(0, MAX_SELECTION_LENGTH);
-  }
-
-  // Store current selection for context menu
-  chrome.storage.local.set({
-    currentSelection: {
-      text: selectedText,
-      url: window.location.href,
-      domain: window.location.hostname,
-      timestamp: Date.now(),
-    },
-  });
-
-  logger.debug('Selection stored:', {
-    length: selectedText.length,
-    domain: window.location.hostname,
-  });
 }
 
 /**
@@ -121,27 +147,37 @@ async function handleShortcutTrigger(): Promise<void> {
     }
 
     // Send message to background to open side panel
-    chrome.runtime.sendMessage({
-      type: 'OPEN_SIDE_PANEL',
-      payload: {
-        text: selectedText,
-        trigger: 'keyboard_shortcut',
-      },
-    });
-
-    // Track analytics
-    chrome.runtime.sendMessage({
-      type: 'TRACK_EVENT',
-      payload: {
-        event: 'keyboard_shortcut_used',
-        properties: {
-          text_length: selectedText.length,
-          domain: window.location.hostname,
+    if (typeof chrome !== 'undefined' && chrome.runtime) {
+      chrome.runtime.sendMessage({
+        type: 'OPEN_SIDE_PANEL',
+        payload: {
+          text: selectedText,
+          trigger: 'keyboard_shortcut',
         },
-      },
-    });
+      }).catch((error) => {
+        logger.error('Failed to send message to background:', error);
+        showNotification('Failed to open side panel. Please try again.', 'error');
+      });
 
-    logger.info('Keyboard shortcut triggered');
+      // Track analytics
+      chrome.runtime.sendMessage({
+        type: 'TRACK_EVENT',
+        payload: {
+          event: 'keyboard_shortcut_used',
+          properties: {
+            text_length: selectedText.length,
+            domain: window.location.hostname,
+          },
+        },
+      }).catch((error) => {
+        logger.debug('Failed to track event:', error);
+      });
+
+      logger.info('Keyboard shortcut triggered');
+    } else {
+      logger.error('chrome.runtime not available');
+      showNotification('Extension not available', 'error');
+    }
   } catch (error) {
     logger.error('Failed to handle keyboard shortcut:', error);
     showNotification('Something went wrong. Please try again.', 'error');
@@ -152,23 +188,32 @@ async function handleShortcutTrigger(): Promise<void> {
  * Set up message listener for context menu clicks
  */
 function setupMessageListener(): void {
-  chrome.runtime.onMessage.addListener((message: ChromeMessage, sender, sendResponse) => {
-    if (message.type === 'CONTEXT_MENU_CLICKED') {
-      handleContextMenuClick();
-      sendResponse({ success: true });
-    }
+  if (typeof chrome !== 'undefined' && chrome.runtime) {
+    chrome.runtime.onMessage.addListener((message: ChromeMessage, sender, sendResponse) => {
+      try {
+        if (message.type === 'CONTEXT_MENU_CLICKED') {
+          handleContextMenuClick();
+          sendResponse({ success: true });
+        }
 
-    if (message.type === 'GET_CURRENT_SELECTION') {
-      const selectedText = selectionHandler?.getSelectedText() || '';
-      sendResponse({ text: selectedText });
-    }
+        if (message.type === 'GET_CURRENT_SELECTION') {
+          const selectedText = selectionHandler?.getSelectedText() || '';
+          sendResponse({ text: selectedText });
+        }
 
-    // Return true to indicate async response
-    console.log(sender)
-    return true;
-  });
+        // Return true to indicate async response
+        return true;
+      } catch (error) {
+        logger.error('Error in message listener:', error, sender);
+        sendResponse({ success: false, error: String(error) });
+        return false;
+      }
+    });
 
-  logger.info('Message listener registered');
+    logger.info('Message listener registered');
+  } else {
+    logger.error('chrome.runtime not available, message listener not registered');
+  }
 }
 
 /**
@@ -177,6 +222,12 @@ function setupMessageListener(): void {
 async function handleContextMenuClick(): Promise<void> {
   try {
     // Get current selection from storage (set by context menu)
+    if (!isChromeStorageAvailable()) {
+      logger.error('chrome.storage not available');
+      showNotification('Extension storage not available', 'error');
+      return;
+    }
+
     const result = await chrome.storage.local.get('currentSelection');
     const selection = result.currentSelection;
 
@@ -186,27 +237,37 @@ async function handleContextMenuClick(): Promise<void> {
     }
 
     // Send message to background to open side panel
-    chrome.runtime.sendMessage({
-      type: 'OPEN_SIDE_PANEL',
-      payload: {
-        text: selection.text,
-        trigger: 'context_menu',
-      },
-    });
-
-    // Track analytics
-    chrome.runtime.sendMessage({
-      type: 'TRACK_EVENT',
-      payload: {
-        event: 'context_menu_clicked',
-        properties: {
-          text_length: selection.text.length,
-          domain: window.location.hostname,
+    if (typeof chrome !== 'undefined' && chrome.runtime) {
+      chrome.runtime.sendMessage({
+        type: 'OPEN_SIDE_PANEL',
+        payload: {
+          text: selection.text,
+          trigger: 'context_menu',
         },
-      },
-    });
+      }).catch((error) => {
+        logger.error('Failed to send message to background:', error);
+        showNotification('Failed to open side panel. Please try again.', 'error');
+      });
 
-    logger.info('Context menu click handled');
+      // Track analytics
+      chrome.runtime.sendMessage({
+        type: 'TRACK_EVENT',
+        payload: {
+          event: 'context_menu_clicked',
+          properties: {
+            text_length: selection.text.length,
+            domain: window.location.hostname,
+          },
+        },
+      }).catch((error) => {
+        logger.debug('Failed to track event:', error);
+      });
+
+      logger.info('Context menu click handled');
+    } else {
+      logger.error('chrome.runtime not available');
+      showNotification('Extension not available', 'error');
+    }
   } catch (error) {
     logger.error('Failed to handle context menu click:', error);
     showNotification('Something went wrong. Please try again.', 'error');

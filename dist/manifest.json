@@ -24,7 +24,7 @@
   "content_scripts": [
     {
       "js": [
-        "assets/content.ts-loader-D2vlINzQ.js"
+        "assets/content.ts-loader-DFZKRqO3.js"
       ],
       "matches": [
         "<all_urls>"
@@ -71,7 +71,7 @@
         "images/*",
         "onboarding.html",
         "assets/utils-BvHapBx2.js",
-        "assets/content.ts-C-xFKOMc.js"
+        "assets/content.ts-CBkSlV4C.js"
       ],
       "use_dynamic_url": false
     }

@@ -225,7 +225,49 @@ export const SidePanel: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      await authService.loginWithWebApp();
+      setError('null');
+      
+      // Open compact OAuth popup
+      const loginUrl = `${process.env.VITE_API_URL || 'https://stupify.app'}/login?ref=extension&mode=popup`;
+      
+      const popup = window.open(
+        loginUrl,
+        'Stupify Login',
+        'width=450,height=650,menubar=no,toolbar=no,location=no,status=no'
+      );
+
+      // Poll for auth completion
+      const checkAuth = setInterval(async () => {
+        try {
+          // Check if popup was closed
+          if (popup?.closed) {
+            clearInterval(checkAuth);
+            
+            // Check auth status
+            const authState = await authService.checkAuthStatus();
+            
+            if (authState.isAuthenticated) {
+              // Success! Reload side panel
+              window.location.reload();
+            } else {
+              setError('Login cancelled or failed');
+            }
+          }
+        } catch (error) {
+          clearInterval(checkAuth);
+          console.error('Auth check error:', error);
+        }
+      }, 1000); // Check every second
+
+      // Timeout after 5 minutes
+      setTimeout(() => {
+        clearInterval(checkAuth);
+        if (popup && !popup.closed) {
+          popup.close();
+          setError('Login timeout');
+        }
+      }, 5 * 60 * 1000);
+      
     } catch (error) {
       console.error('❌ Login failed:', error);
       setError('Login failed. Please try again.');

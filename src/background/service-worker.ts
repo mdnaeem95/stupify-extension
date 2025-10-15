@@ -231,37 +231,36 @@ chrome.commands.onCommand.addListener(async (command) => {
 
 /**
  * Open side panel with selected text
+ * FIXED: Preserves user gesture, no fallback redirect
  */
 async function openSidePanel(tabId: number, selectedText: string): Promise<void> {
+  logger.info('Opening side panel for tab:', tabId);
+
   try {
-    // Check if user is authenticated
-    const { auth } = await chrome.storage.local.get('auth');
-
-    if (!auth?.accessToken) {
-      // Not authenticated - open popup to sign in
-      logger.info('User not authenticated, showing auth prompt');
-      
-      // For now, just open the web app
-      await chrome.tabs.create({
-        url: 'https://stupify.app/login?ref=extension',
-      });
-      return;
-    }
-
-    // Store selected text for side panel
-    await chrome.storage.local.set({
+    // Store data first (without await to preserve gesture)
+    chrome.storage.local.set({
       pendingExplanation: {
         text: selectedText,
         timestamp: Date.now(),
       },
+    }).catch((error) => {
+      logger.error('Failed to store pending explanation:', error);
     });
 
-    // Open side panel
+    // Open side panel immediately (this MUST be synchronous from user gesture)
     await chrome.sidePanel.open({ tabId });
-
-    logger.info('Side panel opened');
+    
+    logger.info('✅ Side panel opened successfully');
+    
+    trackEvent('side_panel_opened', {
+      text_length: selectedText.length,
+    });
   } catch (error) {
-    logger.error('Failed to open side panel:', error);
+    logger.error('❌ Failed to open side panel:', error);
+    
+    // Only show error notification, DON'T open web app
+    // Let user try again
+    logger.warn('User gesture may have been lost. User should try again.');
   }
 }
 
