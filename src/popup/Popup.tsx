@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useAuthStore } from '../../stores/authStore';
-import { useSettingsStore } from '../../stores/settingsStore';
 import { Flame, BookOpen, Sparkles, Settings, ExternalLink } from 'lucide-react';
-import { URLS } from '../../shared/constants';
-import { formatNumber } from '../../shared/utils';
+import { useAuthStore } from '@/stores/authStore';
+import { URLS } from '@/shared/constants';
+import { formatNumber } from '@/shared/utils';
 
 interface RecentExplanation {
   question: string;
@@ -13,7 +12,6 @@ interface RecentExplanation {
 
 const Popup: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuthStore();
-  const { defaultComplexity } = useSettingsStore();
   
   const [stats, setStats] = useState({
     streak: 0,

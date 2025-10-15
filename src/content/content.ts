@@ -163,6 +163,7 @@ function setupMessageListener(): void {
     }
 
     // Return true to indicate async response
+    console.log(sender)
     return true;
   });
 

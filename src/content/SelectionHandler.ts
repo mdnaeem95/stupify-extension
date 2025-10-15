@@ -58,7 +58,7 @@ export class SelectionHandler {
   /**
    * Handle mouse up event
    */
-  private handleMouseUp = (event: MouseEvent): void => {
+  private handleMouseUp = (): void => {
     if (this.isPaused || this.isDestroyed) return;
 
     // Debounce to avoid too many calls
