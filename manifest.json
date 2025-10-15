@@ -21,7 +21,7 @@
     "service_worker": "src/background/service-worker.ts",
     "type": "module"
   },
-  "settings_ui": {
+  "options_ui": {
     "page": "settings.html",
     "open_in_tab": true
   },
