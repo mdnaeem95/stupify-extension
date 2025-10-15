@@ -1,6 +1,6 @@
 {
   "../../../../../@crx/manifest": {
-    "file": "assets/crx-manifest.js-BaWNjef8.js",
+    "file": "assets/crx-manifest.js-_pAlRly7.js",
     "name": "crx-manifest.js",
     "src": "../../../../../@crx/manifest",
     "isEntry": true
@@ -49,6 +49,17 @@
       "_globals-DvHHdZrZ.js",
       "_rateLimiter-CeXPzy5c.js",
       "_sparkles-CQiXILgo.js"
+    ]
+  },
+  "_index-D3FOPadw.js": {
+    "file": "assets/index-D3FOPadw.js",
+    "name": "index",
+    "imports": [
+      "_globals-DvHHdZrZ.js",
+      "_utils-edMwt5UB.js",
+      "_check-DTC6RNqm.js",
+      "_zap-BBMCCmo9.js",
+      "_chevron-right-zVMNHD0m.js"
     ]
   },
   "_rateLimiter-CeXPzy5c.js": {
@@ -105,12 +116,13 @@
     ]
   },
   "settings.html": {
-    "file": "assets/settings-D3FOPadw.js",
-    "name": "settings",
+    "file": "assets/settings.html-DOkI9011.js",
+    "name": "settings.html",
     "src": "settings.html",
     "isEntry": true,
     "imports": [
       "_globals-DvHHdZrZ.js",
+      "_index-D3FOPadw.js",
       "_utils-edMwt5UB.js",
       "_check-DTC6RNqm.js",
       "_zap-BBMCCmo9.js",

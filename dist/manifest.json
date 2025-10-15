@@ -21,6 +21,10 @@
     "service_worker": "service-worker-loader.js",
     "type": "module"
   },
+  "options_ui": {
+    "page": "settings.html",
+    "open_in_tab": true
+  },
   "content_scripts": [
     {
       "js": [
@@ -70,6 +74,7 @@
         "icons/*",
         "images/*",
         "onboarding.html",
+        "settings.html",
         "assets/utils-edMwt5UB.js",
         "assets/content.ts-Bc0Pjf1X.js"
       ],

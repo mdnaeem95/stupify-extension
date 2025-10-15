@@ -21,6 +21,10 @@
     "service_worker": "src/background/service-worker.ts",
     "type": "module"
   },
+  "settings_ui": {
+    "page": "settings.html",
+    "open_in_tab": true
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
@@ -56,7 +60,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["icons/*", "images/*", "onboarding.html"],
+      "resources": ["icons/*", "images/*", "onboarding.html", "settings.html"],
       "matches": ["<all_urls>"]
     }
   ]
