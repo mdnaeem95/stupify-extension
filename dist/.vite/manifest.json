@@ -9,25 +9,25 @@
     "file": "assets/globals-1AdIEABp.css",
     "src": "_globals-!~{004}~.js"
   },
-  "_globals-Bgn4KBWX.js": {
-    "file": "assets/globals-Bgn4KBWX.js",
+  "_globals-Ch-Es4C0.js": {
+    "file": "assets/globals-Ch-Es4C0.js",
     "name": "globals",
     "css": [
       "assets/globals-1AdIEABp.css"
     ]
   },
-  "_index-Bwv9ho_y.js": {
-    "file": "assets/index-Bwv9ho_y.js",
+  "_index-DP92Rq7X.js": {
+    "file": "assets/index-DP92Rq7X.js",
     "name": "index",
     "imports": [
-      "_globals-Bgn4KBWX.js"
+      "_globals-Ch-Es4C0.js"
     ]
   },
-  "_index-DLLDZAmK.js": {
-    "file": "assets/index-DLLDZAmK.js",
+  "_index-DhlPQN69.js": {
+    "file": "assets/index-DhlPQN69.js",
     "name": "index",
     "imports": [
-      "_globals-Bgn4KBWX.js"
+      "_globals-Ch-Es4C0.js"
     ]
   },
   "_utils-edMwt5UB.js": {
@@ -39,23 +39,23 @@
     "src": "content.ts-loader.js"
   },
   "popup.html": {
-    "file": "assets/popup.html-BcLeT7wr.js",
+    "file": "assets/popup.html-5Y8Tl014.js",
     "name": "popup.html",
     "src": "popup.html",
     "isEntry": true,
     "imports": [
-      "_globals-Bgn4KBWX.js",
-      "_index-Bwv9ho_y.js"
+      "_globals-Ch-Es4C0.js",
+      "_index-DhlPQN69.js"
     ]
   },
   "sidepanel.html": {
-    "file": "assets/sidepanel.html-CzKUgdRj.js",
+    "file": "assets/sidepanel.html-Chqd0G7A.js",
     "name": "sidepanel.html",
     "src": "sidepanel.html",
     "isEntry": true,
     "imports": [
-      "_globals-Bgn4KBWX.js",
-      "_index-DLLDZAmK.js"
+      "_globals-Ch-Es4C0.js",
+      "_index-DP92Rq7X.js"
     ]
   },
   "src/background/service-worker.ts": {

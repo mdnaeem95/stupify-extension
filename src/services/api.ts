@@ -8,7 +8,7 @@
  * - Retry logic
  */
 
-const API_BASE_URL = process.env.VITE_API_URL || 'https://stupify.app/api';
+const API_BASE_URL = process.env.VITE_API_URL || 'https://stupify.app';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
