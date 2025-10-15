@@ -13,6 +13,7 @@
 import { logger } from '@/shared/utils';
 import { SelectionHandler } from './SelectionHandler';
 import { ChromeMessage } from '@/shared/types';
+import "./styles.css";
 
 // Constants
 const MIN_SELECTION_LENGTH = 10;

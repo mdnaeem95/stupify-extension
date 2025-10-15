@@ -1,7 +1,8 @@
 // Chrome Storage API Wrapper
 
-import { STORAGE_KEYS } from '../shared/constants';
-import type { ExtensionSettings, CachedExplanation, User } from '../shared/types';
+import { STORAGE_KEYS } from "@/shared/constants";
+import { CachedExplanation, ExtensionSettings, User } from "@/shared/types";
+
 
 /**
  * Generic get function for chrome.storage.sync

@@ -1,0 +1,84 @@
+{
+  "../../../../../@crx/manifest": {
+    "file": "assets/crx-manifest.js-CY1e9Dxi.js",
+    "name": "crx-manifest.js",
+    "src": "../../../../../@crx/manifest",
+    "isEntry": true
+  },
+  "_globals-!~{004}~.js": {
+    "file": "assets/globals-CgEAMJI3.css",
+    "src": "_globals-!~{004}~.js"
+  },
+  "_globals-DrID7SY-.js": {
+    "file": "assets/globals-DrID7SY-.js",
+    "name": "globals",
+    "css": [
+      "assets/globals-CgEAMJI3.css"
+    ]
+  },
+  "_index-DZtw90UM.js": {
+    "file": "assets/index-DZtw90UM.js",
+    "name": "index",
+    "imports": [
+      "_globals-DrID7SY-.js"
+    ]
+  },
+  "_index-kIEgeD8d.js": {
+    "file": "assets/index-kIEgeD8d.js",
+    "name": "index",
+    "imports": [
+      "_globals-DrID7SY-.js",
+      "_utils-BvHapBx2.js"
+    ]
+  },
+  "_utils-BvHapBx2.js": {
+    "file": "assets/utils-BvHapBx2.js",
+    "name": "utils"
+  },
+  "content.ts-loader.js": {
+    "file": "assets/content.ts-loader-D2vlINzQ.js",
+    "src": "content.ts-loader.js"
+  },
+  "popup.html": {
+    "file": "assets/popup.html-D1bpm_sj.js",
+    "name": "popup.html",
+    "src": "popup.html",
+    "isEntry": true,
+    "imports": [
+      "_globals-DrID7SY-.js",
+      "_index-kIEgeD8d.js",
+      "_utils-BvHapBx2.js"
+    ]
+  },
+  "sidepanel.html": {
+    "file": "assets/sidepanel.html-Btgf-ogA.js",
+    "name": "sidepanel.html",
+    "src": "sidepanel.html",
+    "isEntry": true,
+    "imports": [
+      "_globals-DrID7SY-.js",
+      "_index-DZtw90UM.js"
+    ]
+  },
+  "src/background/service-worker.ts": {
+    "file": "assets/service-worker.ts-Dar3Toiz.js",
+    "name": "service-worker.ts",
+    "src": "src/background/service-worker.ts",
+    "isEntry": true,
+    "imports": [
+      "_utils-BvHapBx2.js"
+    ]
+  },
+  "src/content/content.ts": {
+    "file": "assets/content.ts-C-xFKOMc.js",
+    "name": "content.ts",
+    "src": "src/content/content.ts",
+    "isEntry": true,
+    "imports": [
+      "_utils-BvHapBx2.js"
+    ],
+    "css": [
+      "assets/content-CkZsf8xn.css"
+    ]
+  }
+}

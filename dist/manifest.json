@@ -23,16 +23,16 @@
   },
   "content_scripts": [
     {
+      "js": [
+        "assets/content.ts-loader-D2vlINzQ.js"
+      ],
       "matches": [
         "<all_urls>"
       ],
-      "js": [
-        "src/content/content.ts-loader.js"
-      ],
+      "run_at": "document_idle",
       "css": [
-        "src/content/styles.css"
-      ],
-      "run_at": "document_idle"
+        "assets/content-CkZsf8xn.css"
+      ]
     }
   ],
   "permissions": [
@@ -58,27 +58,20 @@
   "side_panel": {
     "default_path": "sidepanel.html"
   },
-  "options_page": "options.html",
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
   "web_accessible_resources": [
     {
+      "matches": [
+        "<all_urls>"
+      ],
       "resources": [
         "icons/*",
-        "images/*"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
-    },
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "resources": [
-        "**/*",
-        "*"
+        "images/*",
+        "onboarding.html",
+        "assets/utils-BvHapBx2.js",
+        "assets/content.ts-C-xFKOMc.js"
       ],
       "use_dynamic_url": false
     }

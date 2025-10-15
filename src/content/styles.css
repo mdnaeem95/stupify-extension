@@ -7,6 +7,8 @@
  */
 
 /* Notification Container */
+@import "tailwindcss";
+
 .stupify-notification {
   position: fixed !important;
   top: 20px !important;

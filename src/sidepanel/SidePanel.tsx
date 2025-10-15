@@ -1,19 +1,27 @@
 /**
  * Side Panel Component
  * Main interface for displaying explanations
- * Day 4: Side Panel UI
+ * Day 5: Fully Integrated with API Services
  */
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { ComplexitySelector } from '../components/ComplexitySelector';
 import { StreamingResponse } from '../components/StreamingResponse';
 import { FollowUpQuestions } from '../components/FollowUpQuestions';
 import { ActionButtons } from '../components/ActionButtons';
 import { ErrorState } from '../components/ErrorState';
 import { EmptyState } from '../components/EmptyState';
-import { Globe, ChevronDown, ChevronUp } from 'lucide-react';
+import { Globe, ChevronDown, ChevronUp, LogIn } from 'lucide-react';
 import { useSidePanelStore } from '@/stores/useSidePanelStore';
 import { FollowUpQuestion } from '@/shared/sidepanel';
+import {
+  authService,
+  rateLimiter,
+  streamWithRetry,
+  createStreamCanceller,
+  followUpService,
+  cacheService,
+  offlineDetector,
+} from '../services';
 
 export const SidePanel: React.FC = () => {
   const {
@@ -24,15 +32,55 @@ export const SidePanel: React.FC = () => {
     isCollapsed,
     setComplexity,
     startExplanation,
+    streamResponse,
+    completeExplanation,
+    setError,
+    setFollowUpQuestions,
     markFollowUpClicked,
     toggleCollapse,
+    setSelectedText,
   } = useSidePanelStore();
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [usageRemaining, setUsageRemaining] = useState(10);
+  const [isPremium, setIsPremium] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
+  const cancellerRef = useRef<{ cancel: () => void } | null>(null);
+
+  // Auth state
+  useEffect(() => {
+    const unsubscribe = authService.subscribe((state) => {
+      setIsAuthenticated(state.isAuthenticated);
+      setIsPremium(state.user?.subscription_tier === 'premium');
+    });
+
+    authService.checkAuthStatus();
+
+    return unsubscribe;
+  }, []);
+
+  // Usage tracking
+  useEffect(() => {
+    const unsubscribe = rateLimiter.subscribe((state) => {
+      setUsageRemaining(state.remaining);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  // Offline detection
+  useEffect(() => {
+    const unsubscribe = offlineDetector.subscribe((offline) => {
+      setIsOffline(offline);
+    });
+
+    return unsubscribe;
+  }, []);
 
   // Listen for messages from content script
   useEffect(() => {
     const handleMessage = (message: any) => {
       if (message.type === 'OPEN_SIDE_PANEL') {
-        // This will be handled by the store when we integrate API
         console.log('Opening side panel with text:', message.payload);
       }
     };
@@ -41,14 +89,112 @@ export const SidePanel: React.FC = () => {
     return () => chrome.runtime.onMessage.removeListener(handleMessage);
   }, []);
 
-  const handleExplain = () => {
+  const getDomain = (url: string): string => {
+    try {
+      return new URL(url).hostname.replace('www.', '');
+    } catch {
+      return 'Unknown';
+    }
+  };
+
+  const handleExplain = async () => {
     if (!selectedText) return;
-    
+
+    // Check if user can ask
+    if (!rateLimiter.canAsk()) {
+      setError('Daily limit reached! Upgrade for unlimited questions.');
+      return;
+    }
+
+    const question = selectedText.text;
+
+    // Reset state
     startExplanation();
-    
-    // TODO: Call API in Day 5
-    // For now, simulate with mock data
-    console.log('Starting explanation for:', selectedText.text);
+
+    // Check cache first
+    const cached = await cacheService.get(question, complexity);
+    if (cached) {
+      console.log('✅ Using cached response');
+      
+      // Stream the cached response character by character for effect
+      const words = cached.answer.split(' ');
+      let currentText = '';
+      
+      for (const word of words) {
+        currentText += (currentText ? ' ' : '') + word;
+        streamResponse(word + ' ');
+        await new Promise(resolve => setTimeout(resolve, 30));
+      }
+      
+      completeExplanation();
+      
+      // Generate follow-ups
+      generateFollowUps(question, cached.answer);
+      return;
+    }
+
+    // Create canceller
+    const canceller = createStreamCanceller();
+    cancellerRef.current = canceller;
+
+    try {
+      let fullResponse = '';
+
+      // Stream response
+      await streamWithRetry(
+        question,
+        complexity,
+        [],
+        {
+          signal: canceller.signal,
+          onToken: (token) => {
+            fullResponse += token;
+            streamResponse(token);
+          },
+          onComplete: async (final) => {
+            completeExplanation();
+            
+            // Cache the response
+            await cacheService.add(question, final, complexity);
+            
+            // Record usage
+            await rateLimiter.recordQuestion();
+            
+            // Generate follow-ups
+            generateFollowUps(question, final);
+          },
+          onError: (error) => {
+            setError(error.message || 'Failed to get explanation');
+            console.error('❌ Stream error:', error);
+          },
+        }
+      );
+    } catch (error: any) {
+      setError(error.message || 'Failed to get explanation');
+      console.error('❌ Ask error:', error);
+    }
+  };
+
+  const generateFollowUps = async (question: string, answer: string) => {
+    try {
+      const followUps = await followUpService.generate({
+        question,
+        answer,
+        complexityLevel: complexity,
+      });
+      
+      // Convert to store format
+      const formattedFollowUps = followUps.map(f => ({
+        id: f.id,
+        question: f.text,
+        category: f.category,
+        clicked: false,
+      }));
+      
+      setFollowUpQuestions(formattedFollowUps);
+    } catch (error) {
+      console.error('❌ Failed to generate follow-ups:', error);
+    }
   };
 
   const handleRetry = () => {
@@ -57,20 +203,37 @@ export const SidePanel: React.FC = () => {
 
   const handleFollowUpClick = (question: FollowUpQuestion) => {
     markFollowUpClicked(question.id);
-    // TODO: Trigger new explanation with follow-up question
-    console.log('Follow-up clicked:', question.question);
+    
+    // Set the follow-up as new selected text and trigger explanation
+    setSelectedText({
+      text: question.question,
+      url: selectedText?.url || '',
+      domain: selectedText?.domain || 'Follow-up',
+      timestamp: Date.now(),
+    });
+    
+    // Trigger new explanation
+    setTimeout(() => handleExplain(), 100);
+  };
+
+  const handleCancelStream = () => {
+    if (cancellerRef.current) {
+      cancellerRef.current.cancel();
+      cancellerRef.current = null;
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
+      await authService.loginWithWebApp();
+    } catch (error) {
+      console.error('❌ Login failed:', error);
+      setError('Login failed. Please try again.');
+    }
   };
 
   const handleOpenInApp = () => {
     window.open('https://stupify.ai/chat', '_blank');
-  };
-
-  const getDomain = (url: string): string => {
-    try {
-      return new URL(url).hostname.replace('www.', '');
-    } catch {
-      return 'Unknown';
-    }
   };
 
   return (
@@ -85,9 +248,40 @@ export const SidePanel: React.FC = () => {
               </div>
               <h1 className="text-lg font-bold text-gray-900">Stupify</h1>
             </div>
-            <span className="text-xs text-gray-500">v1.0.0</span>
+            
+            <div className="flex items-center gap-3">
+              {isOffline && (
+                <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">
+                  Offline
+                </span>
+              )}
+              
+              {!isAuthenticated ? (
+                <button
+                  onClick={handleLogin}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                >
+                  <LogIn className="w-4 h-4" />
+                  Login
+                </button>
+              ) : (
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-gray-600">
+                    {isPremium ? (
+                      <span className="px-2 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded font-medium text-xs">
+                        ∞ Premium
+                      </span>
+                    ) : (
+                      <span className="text-gray-700 font-medium">
+                        {usageRemaining} left
+                      </span>
+                    )}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-
+          
           {/* Complexity Selector */}
           <ComplexitySelector
             selected={complexity}
@@ -145,9 +339,30 @@ export const SidePanel: React.FC = () => {
                   <div className="text-center py-8">
                     <button
                       onClick={handleExplain}
-                      className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
+                      disabled={!rateLimiter.canAsk()}
+                      className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Explain This
+                      {rateLimiter.canAsk() ? 'Explain This' : 'Daily Limit Reached'}
+                    </button>
+                    {!rateLimiter.canAsk() && (
+                      <button
+                        onClick={() => window.open('https://stupify.ai/pricing', '_blank')}
+                        className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"
+                      >
+                        Upgrade for unlimited questions →
+                      </button>
+                    )}
+                  </div>
+                )}
+                
+                {/* Cancel button for streaming */}
+                {explanation.isStreaming && (
+                  <div className="mt-4 text-center">
+                    <button
+                      onClick={handleCancelStream}
+                      className="text-sm text-gray-600 hover:text-gray-800 font-medium"
+                    >
+                      Cancel
                     </button>
                   </div>
                 )}

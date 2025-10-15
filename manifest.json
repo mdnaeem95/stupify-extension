@@ -25,7 +25,6 @@
     {
       "matches": ["<all_urls>"],
       "js": ["src/content/content.ts"],
-      "css": ["src/content/styles.css"],
       "run_at": "document_idle"
     }
   ],
@@ -52,13 +51,12 @@
   "side_panel": {
     "default_path": "sidepanel.html"
   },
-  "options_page": "options.html",
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
   "web_accessible_resources": [
     {
-      "resources": ["icons/*", "images/*"],
+      "resources": ["icons/*", "images/*", "onboarding.html"],
       "matches": ["<all_urls>"]
     }
   ]
