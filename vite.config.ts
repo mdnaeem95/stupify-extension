@@ -41,6 +41,8 @@ export default defineConfig(({ mode }) => {
         input: {
           popup: 'popup.html',
           sidepanel: 'sidepanel.html',
+          settings: 'settings.html',
+          onboarding: 'onboarding.html',
         },
       },
     },

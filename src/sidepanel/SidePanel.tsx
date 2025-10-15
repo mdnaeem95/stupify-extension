@@ -21,6 +21,7 @@ import {
   followUpService,
   cacheService,
 } from '../services';
+import { StatsWidget } from '@/components/StatsWidget';
 
 export const SidePanel: React.FC = () => {
   const {
@@ -398,6 +399,9 @@ export const SidePanel: React.FC = () => {
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-6 space-y-6">
+          {/* Stats Widget */}
+          <StatsWidget />
+          
           {/* No text selected - Empty State */}
           {!selectedText && <EmptyState />}
 

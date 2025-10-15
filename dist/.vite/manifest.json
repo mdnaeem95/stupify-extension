@@ -5,57 +5,131 @@
     "src": "../../../../../@crx/manifest",
     "isEntry": true
   },
-  "_globals-!~{004}~.js": {
-    "file": "assets/globals-1AdIEABp.css",
-    "src": "_globals-!~{004}~.js"
+  "_check-DTC6RNqm.js": {
+    "file": "assets/check-DTC6RNqm.js",
+    "name": "check",
+    "imports": [
+      "_globals-DvHHdZrZ.js"
+    ]
   },
-  "_globals-DhsXFkrn.js": {
-    "file": "assets/globals-DhsXFkrn.js",
+  "_chevron-right-zVMNHD0m.js": {
+    "file": "assets/chevron-right-zVMNHD0m.js",
+    "name": "chevron-right",
+    "imports": [
+      "_globals-DvHHdZrZ.js"
+    ]
+  },
+  "_globals-!~{006}~.js": {
+    "file": "assets/globals-D_QDQxKa.css",
+    "src": "_globals-!~{006}~.js"
+  },
+  "_globals-DvHHdZrZ.js": {
+    "file": "assets/globals-DvHHdZrZ.js",
     "name": "globals",
     "css": [
-      "assets/globals-1AdIEABp.css"
+      "assets/globals-D_QDQxKa.css"
     ]
   },
-  "_index-CDlJU-RH.js": {
-    "file": "assets/index-CDlJU-RH.js",
+  "_index-BfHZb2yA.js": {
+    "file": "assets/index-BfHZb2yA.js",
     "name": "index",
     "imports": [
-      "_globals-DhsXFkrn.js"
+      "_globals-DvHHdZrZ.js",
+      "_rateLimiter-CeXPzy5c.js",
+      "_sparkles-CQiXILgo.js",
+      "_check-DTC6RNqm.js",
+      "_utils-edMwt5UB.js",
+      "_chevron-right-zVMNHD0m.js"
     ]
   },
-  "_index-CVZUG3De.js": {
-    "file": "assets/index-CVZUG3De.js",
+  "_index-CCdhnJMJ.js": {
+    "file": "assets/index-CCdhnJMJ.js",
     "name": "index",
     "imports": [
-      "_globals-DhsXFkrn.js"
+      "_globals-DvHHdZrZ.js",
+      "_rateLimiter-CeXPzy5c.js",
+      "_sparkles-CQiXILgo.js"
+    ]
+  },
+  "_rateLimiter-CeXPzy5c.js": {
+    "file": "assets/rateLimiter-CeXPzy5c.js",
+    "name": "rateLimiter",
+    "imports": [
+      "_globals-DvHHdZrZ.js"
+    ]
+  },
+  "_sparkles-CQiXILgo.js": {
+    "file": "assets/sparkles-CQiXILgo.js",
+    "name": "sparkles",
+    "imports": [
+      "_globals-DvHHdZrZ.js"
     ]
   },
   "_utils-edMwt5UB.js": {
     "file": "assets/utils-edMwt5UB.js",
     "name": "utils"
   },
+  "_zap-BBMCCmo9.js": {
+    "file": "assets/zap-BBMCCmo9.js",
+    "name": "zap",
+    "imports": [
+      "_globals-DvHHdZrZ.js"
+    ]
+  },
   "content.ts-loader.js": {
-    "file": "assets/content.ts-loader-4aRzIR_T.js",
+    "file": "assets/content.ts-loader-BsJmwOy7.js",
     "src": "content.ts-loader.js"
   },
+  "onboarding.html": {
+    "file": "assets/onboarding-BYeSDpTf.js",
+    "name": "onboarding",
+    "src": "onboarding.html",
+    "isEntry": true,
+    "imports": [
+      "_globals-DvHHdZrZ.js",
+      "_check-DTC6RNqm.js",
+      "_zap-BBMCCmo9.js",
+      "_sparkles-CQiXILgo.js"
+    ]
+  },
   "popup.html": {
-    "file": "assets/popup.html-F_ngLMPu.js",
+    "file": "assets/popup.html-Du8E3pIu.js",
     "name": "popup.html",
     "src": "popup.html",
     "isEntry": true,
     "imports": [
-      "_globals-DhsXFkrn.js",
-      "_index-CVZUG3De.js"
+      "_globals-DvHHdZrZ.js",
+      "_index-CCdhnJMJ.js",
+      "_rateLimiter-CeXPzy5c.js",
+      "_sparkles-CQiXILgo.js"
+    ]
+  },
+  "settings.html": {
+    "file": "assets/settings-D3FOPadw.js",
+    "name": "settings",
+    "src": "settings.html",
+    "isEntry": true,
+    "imports": [
+      "_globals-DvHHdZrZ.js",
+      "_utils-edMwt5UB.js",
+      "_check-DTC6RNqm.js",
+      "_zap-BBMCCmo9.js",
+      "_chevron-right-zVMNHD0m.js"
     ]
   },
   "sidepanel.html": {
-    "file": "assets/sidepanel.html-DCfUOtcg.js",
+    "file": "assets/sidepanel.html-ItIj7Gbx.js",
     "name": "sidepanel.html",
     "src": "sidepanel.html",
     "isEntry": true,
     "imports": [
-      "_globals-DhsXFkrn.js",
-      "_index-CDlJU-RH.js"
+      "_globals-DvHHdZrZ.js",
+      "_index-BfHZb2yA.js",
+      "_rateLimiter-CeXPzy5c.js",
+      "_sparkles-CQiXILgo.js",
+      "_check-DTC6RNqm.js",
+      "_utils-edMwt5UB.js",
+      "_chevron-right-zVMNHD0m.js"
     ]
   },
   "src/background/service-worker.ts": {
@@ -68,7 +142,7 @@
     ]
   },
   "src/content/content.ts": {
-    "file": "assets/content.ts-BbiFULej.js",
+    "file": "assets/content.ts-Bc0Pjf1X.js",
     "name": "content.ts",
     "src": "src/content/content.ts",
     "isEntry": true,
@@ -76,7 +150,7 @@
       "_utils-edMwt5UB.js"
     ],
     "css": [
-      "assets/content-DefdiNjJ.css"
+      "assets/content-CDcEXQb2.css"
     ]
   }
 }

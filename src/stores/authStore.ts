@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import type { User } from '../shared/types';
-import { authStorage, userStorage } from '../lib/storage';
+import { authStorage, userStorage } from '@/lib/storage';
 
 interface AuthState {
   user: User | null;
