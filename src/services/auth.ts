@@ -53,12 +53,10 @@ class AuthService {
     // This ensures popup, sidepanel, and background stay in sync
     chrome.storage.onChanged.addListener((changes, areaName) => {
       if (areaName === 'local' && changes.auth) {
-        console.log('🔄 Auth storage changed, updating state...', {
-          oldValue: changes.auth.oldValue ? '✓' : '✗',
-          newValue: changes.auth.newValue ? '✓' : '✗',
+        console.log('🔄 Auth storage changed in SidePanel!', {
+          had: !!changes.auth.oldValue,
+          now: !!changes.auth.newValue,
         });
-        
-        // Re-check auth status when storage changes
         this.checkAuthStatus();
       }
     });
