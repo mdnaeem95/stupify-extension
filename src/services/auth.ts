@@ -6,6 +6,8 @@
  * - Token management
  * - Session persistence
  * - Sync with web app
+ * 
+ * FIXED: Now listens to storage changes to sync across contexts
  */
 
 import { apiClient } from './api';
@@ -34,6 +36,7 @@ class AuthService {
 
   /**
    * Initialize auth service
+   * FIXED: Now listens to storage changes for cross-context sync
    */
   private async initialize(): Promise<void> {
     await this.checkAuthStatus();
@@ -41,10 +44,26 @@ class AuthService {
     // Listen for auth changes from background script
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message.type === 'AUTH_STATE_CHANGED') {
-        console.log(sender, sendResponse)
+        console.log('📨 AUTH_STATE_CHANGED message received', sender, sendResponse);
         this.checkAuthStatus();
       }
     });
+
+    // CRITICAL: Listen for storage changes across all contexts
+    // This ensures popup, sidepanel, and background stay in sync
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName === 'local' && changes.auth) {
+        console.log('🔄 Auth storage changed, updating state...', {
+          oldValue: changes.auth.oldValue ? '✓' : '✗',
+          newValue: changes.auth.newValue ? '✓' : '✗',
+        });
+        
+        // Re-check auth status when storage changes
+        this.checkAuthStatus();
+      }
+    });
+
+    console.log('✅ Auth service initialized');
   }
 
   /**
@@ -59,6 +78,11 @@ class AuthService {
         isAuthenticated: isAuth,
         user,
         loading: false,
+      });
+
+      console.log('✅ Auth status checked:', {
+        isAuthenticated: isAuth,
+        user: user?.email || 'none',
       });
 
       return this.currentState;
@@ -99,6 +123,8 @@ class AuthService {
       // Track login
       this.trackEvent('extension_login', { method: 'email' });
 
+      console.log('✅ Login successful:', user?.email);
+
     } catch (error) {
       this.updateState({
         isAuthenticated: false,
@@ -133,6 +159,8 @@ class AuthService {
       // Track signup
       this.trackEvent('extension_signup', { method: 'email' });
 
+      console.log('✅ Signup successful:', user?.email);
+
     } catch (error) {
       this.updateState({
         isAuthenticated: false,
@@ -165,6 +193,8 @@ class AuthService {
       // Track logout
       this.trackEvent('extension_logout');
 
+      console.log('✅ Logout successful');
+
     } catch (error) {
       console.error('❌ Logout error:', error);
       throw error;
@@ -180,11 +210,15 @@ class AuthService {
       url: `${process.env.VITE_API_URL || 'https://stupify.app'}/login?redirect=extension`,
     });
 
+    console.log('🌐 Opened web app for login, tab:', tab.id);
+
     // Listen for auth completion
     return new Promise((resolve, reject) => {
       const listener = async (message: any) => {
         if (message.type === 'WEB_AUTH_COMPLETE' && message.tabId === tab.id) {
           chrome.runtime.onMessage.removeListener(listener);
+          
+          console.log('✅ Web auth completed, checking status...');
           
           // Check auth status
           await this.checkAuthStatus();
@@ -219,6 +253,9 @@ class AuthService {
    */
   subscribe(callback: (state: AuthState) => void): () => void {
     this.listeners.add(callback);
+    
+    // Immediately call with current state
+    callback(this.currentState);
     
     // Return unsubscribe function
     return () => {
@@ -274,6 +311,7 @@ class AuthService {
 
   /**
    * Sync auth state with web app
+   * FIXED: Save to nested auth structure
    */
   async syncWithWebApp(): Promise<void> {
     try {
@@ -283,8 +321,11 @@ class AuthService {
       });
 
       if (tabs.length === 0) {
+        console.log('No web app tabs found');
         return;
       }
+
+      console.log(`Found ${tabs.length} web app tab(s), syncing...`);
 
       // Request auth state from web app
       for (const tab of tabs) {
@@ -295,11 +336,15 @@ class AuthService {
             });
 
             if (response && response.isAuthenticated) {
-              // Update extension auth state
+              console.log('✅ Got auth state from web app, saving...');
+              
+              // FIXED: Save to nested auth structure
               await chrome.storage.local.set({
-                accessToken: response.accessToken,
-                refreshToken: response.refreshToken,
-                user: response.user,
+                auth: {
+                  accessToken: response.accessToken,
+                  refreshToken: response.refreshToken,
+                  user: response.user,
+                }
               });
 
               await this.checkAuthStatus();

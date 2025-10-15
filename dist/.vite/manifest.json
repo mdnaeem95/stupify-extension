@@ -6,79 +6,77 @@
     "isEntry": true
   },
   "_globals-!~{004}~.js": {
-    "file": "assets/globals-CgEAMJI3.css",
+    "file": "assets/globals-1AdIEABp.css",
     "src": "_globals-!~{004}~.js"
   },
-  "_globals-DrID7SY-.js": {
-    "file": "assets/globals-DrID7SY-.js",
+  "_globals-Bgn4KBWX.js": {
+    "file": "assets/globals-Bgn4KBWX.js",
     "name": "globals",
     "css": [
-      "assets/globals-CgEAMJI3.css"
+      "assets/globals-1AdIEABp.css"
     ]
   },
-  "_index-DxDzfMr7.js": {
-    "file": "assets/index-DxDzfMr7.js",
+  "_index-Bwv9ho_y.js": {
+    "file": "assets/index-Bwv9ho_y.js",
     "name": "index",
     "imports": [
-      "_globals-DrID7SY-.js",
-      "_utils-BvHapBx2.js"
+      "_globals-Bgn4KBWX.js"
     ]
   },
-  "_index-fbBjbw29.js": {
-    "file": "assets/index-fbBjbw29.js",
+  "_index-DLLDZAmK.js": {
+    "file": "assets/index-DLLDZAmK.js",
     "name": "index",
     "imports": [
-      "_globals-DrID7SY-.js"
+      "_globals-Bgn4KBWX.js"
     ]
   },
-  "_utils-BvHapBx2.js": {
-    "file": "assets/utils-BvHapBx2.js",
+  "_utils-edMwt5UB.js": {
+    "file": "assets/utils-edMwt5UB.js",
     "name": "utils"
   },
   "content.ts-loader.js": {
-    "file": "assets/content.ts-loader-DFZKRqO3.js",
+    "file": "assets/content.ts-loader-4aRzIR_T.js",
     "src": "content.ts-loader.js"
   },
   "popup.html": {
-    "file": "assets/popup.html-CM44rr2Z.js",
+    "file": "assets/popup.html-BcLeT7wr.js",
     "name": "popup.html",
     "src": "popup.html",
     "isEntry": true,
     "imports": [
-      "_globals-DrID7SY-.js",
-      "_index-DxDzfMr7.js",
-      "_utils-BvHapBx2.js"
+      "_globals-Bgn4KBWX.js",
+      "_index-Bwv9ho_y.js"
     ]
   },
   "sidepanel.html": {
-    "file": "assets/sidepanel.html-DAZjQfK7.js",
+    "file": "assets/sidepanel.html-CzKUgdRj.js",
     "name": "sidepanel.html",
     "src": "sidepanel.html",
     "isEntry": true,
     "imports": [
-      "_globals-DrID7SY-.js",
-      "_index-fbBjbw29.js"
+      "_globals-Bgn4KBWX.js",
+      "_index-DLLDZAmK.js"
     ]
   },
   "src/background/service-worker.ts": {
-    "file": "assets/service-worker.ts-Dmv8rSuZ.js",
+    "file": "assets/service-worker.ts-COVSbir-.js",
     "name": "service-worker.ts",
     "src": "src/background/service-worker.ts",
     "isEntry": true,
     "imports": [
-      "_utils-BvHapBx2.js"
+      "_utils-edMwt5UB.js"
     ]
   },
   "src/content/content.ts": {
-    "file": "assets/content.ts-CBkSlV4C.js",
+    "file": "assets/content.ts-BbiFULej.js",
     "name": "content.ts",
     "src": "src/content/content.ts",
     "isEntry": true,
     "imports": [
-      "_utils-BvHapBx2.js"
+      "_utils-edMwt5UB.js"
     ],
     "css": [
-      "assets/content-CkZsf8xn.css"
+      "assets/content-DefdiNjJ.css"
     ]
   }
 }
