@@ -9,25 +9,25 @@
     "file": "assets/globals-1AdIEABp.css",
     "src": "_globals-!~{004}~.js"
   },
-  "_globals-Ch-Es4C0.js": {
-    "file": "assets/globals-Ch-Es4C0.js",
+  "_globals-DhsXFkrn.js": {
+    "file": "assets/globals-DhsXFkrn.js",
     "name": "globals",
     "css": [
       "assets/globals-1AdIEABp.css"
     ]
   },
-  "_index-DP92Rq7X.js": {
-    "file": "assets/index-DP92Rq7X.js",
+  "_index-CDlJU-RH.js": {
+    "file": "assets/index-CDlJU-RH.js",
     "name": "index",
     "imports": [
-      "_globals-Ch-Es4C0.js"
+      "_globals-DhsXFkrn.js"
     ]
   },
-  "_index-DhlPQN69.js": {
-    "file": "assets/index-DhlPQN69.js",
+  "_index-CVZUG3De.js": {
+    "file": "assets/index-CVZUG3De.js",
     "name": "index",
     "imports": [
-      "_globals-Ch-Es4C0.js"
+      "_globals-DhsXFkrn.js"
     ]
   },
   "_utils-edMwt5UB.js": {
@@ -39,23 +39,23 @@
     "src": "content.ts-loader.js"
   },
   "popup.html": {
-    "file": "assets/popup.html-5Y8Tl014.js",
+    "file": "assets/popup.html-F_ngLMPu.js",
     "name": "popup.html",
     "src": "popup.html",
     "isEntry": true,
     "imports": [
-      "_globals-Ch-Es4C0.js",
-      "_index-DhlPQN69.js"
+      "_globals-DhsXFkrn.js",
+      "_index-CVZUG3De.js"
     ]
   },
   "sidepanel.html": {
-    "file": "assets/sidepanel.html-Chqd0G7A.js",
+    "file": "assets/sidepanel.html-DCfUOtcg.js",
     "name": "sidepanel.html",
     "src": "sidepanel.html",
     "isEntry": true,
     "imports": [
-      "_globals-Ch-Es4C0.js",
-      "_index-DP92Rq7X.js"
+      "_globals-DhsXFkrn.js",
+      "_index-CDlJU-RH.js"
     ]
   },
   "src/background/service-worker.ts": {

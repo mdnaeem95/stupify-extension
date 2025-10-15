@@ -69,6 +69,7 @@ export async function streamChatResponse(
       body: JSON.stringify({
         messages,
         simplicityLevel: complexityLevel,
+        source: 'extension'
       }),
       signal: controller.signal,
     });

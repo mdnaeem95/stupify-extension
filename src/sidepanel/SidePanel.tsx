@@ -20,7 +20,6 @@ import {
   createStreamCanceller,
   followUpService,
   cacheService,
-  offlineDetector,
 } from '../services';
 
 export const SidePanel: React.FC = () => {
@@ -70,11 +69,12 @@ export const SidePanel: React.FC = () => {
 
   // Offline detection
   useEffect(() => {
-    const unsubscribe = offlineDetector.subscribe((offline) => {
-      setIsOffline(offline);
-    });
+    // const unsubscribe = offlineDetector.subscribe((offline) => {
+    //   setIsOffline(offline);
+    // });
 
-    return unsubscribe;
+    // return unsubscribe;
+    setIsOffline(false);
   }, []);
 
   // Listen for messages from content script
@@ -174,6 +174,68 @@ export const SidePanel: React.FC = () => {
       console.error('❌ Ask error:', error);
     }
   };
+
+  // Check for pending explanation on load
+  useEffect(() => {
+    const checkPendingExplanation = async () => {
+      try {
+        const { pendingExplanation } = await chrome.storage.local.get('pendingExplanation');
+        
+        if (pendingExplanation?.text) {
+          const text = pendingExplanation.text;
+          console.log('📝 Found pending explanation:', text.substring(0, 50) + '...');
+          
+          // Set the text in state
+          setSelectedText(text);
+          await chrome.storage.local.remove('pendingExplanation');
+          
+          // Auto-start explanation
+          setTimeout(async () => {
+            // Check rate limit
+            if (!rateLimiter.canAsk()) {
+              setError('Daily limit reached! Upgrade for unlimited questions.');
+              return;
+            }
+
+            // Start explanation (no arguments!)
+            startExplanation();
+            
+            try {
+              const canceller = createStreamCanceller();
+              cancellerRef.current = canceller;
+
+              // Correct function signature: (question, complexity, history, options, retries)
+              await streamWithRetry(
+                text,                    // question
+                complexity,              // complexity level
+                [],                      // conversation history (empty for now)
+                {                        // StreamOptions object
+                  onToken: (token) => streamResponse(token),
+                  onComplete: () => {
+                    completeExplanation();
+                    cancellerRef.current = null;
+                  },
+                  onError: (error) => {
+                    setError(error.message);
+                    cancellerRef.current = null;
+                  },
+                  signal: canceller.signal,
+                },
+                2                        // max retries (optional)
+              );
+            } catch (error: any) {
+              console.error('❌ Stream error:', error);
+              setError(error.message || 'Failed to get explanation');
+            }
+          }, 500);
+        }
+      } catch (error) {
+        console.error('❌ Error checking pending explanation:', error);
+      }
+    };
+
+    checkPendingExplanation();
+  }, []);
 
   const generateFollowUps = async (question: string, answer: string) => {
     try {
@@ -381,6 +443,7 @@ export const SidePanel: React.FC = () => {
                   <div className="text-center py-8">
                     <button
                       onClick={handleExplain}
+                      data-testid="explain-button"
                       disabled={!rateLimiter.canAsk()}
                       className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
