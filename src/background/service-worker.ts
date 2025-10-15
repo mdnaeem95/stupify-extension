@@ -243,7 +243,7 @@ async function openSidePanel(tabId: number, selectedText: string): Promise<void>
       
       // For now, just open the web app
       await chrome.tabs.create({
-        url: 'https://stupify.ai/login?ref=extension',
+        url: 'https://stupify.app/login?ref=extension',
       });
       return;
     }
@@ -409,7 +409,7 @@ async function flushEventQueue(): Promise<void> {
     if (eventQueue.length === 0) return;
 
     // Send events to API
-    const response = await fetch('https://stupify.ai/api/analytics/events', {
+    const response = await fetch('https://stupify.app/api/analytics/events', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

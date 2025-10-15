@@ -36,7 +36,7 @@
     "activeTab"
   ],
   "host_permissions": [
-    "https://stupify.ai/*",
+    "https://stupify.app/*",
     "https://*.supabase.co/*"
   ],
   "commands": {

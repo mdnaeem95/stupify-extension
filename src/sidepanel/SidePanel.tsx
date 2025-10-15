@@ -233,7 +233,7 @@ export const SidePanel: React.FC = () => {
   };
 
   const handleOpenInApp = () => {
-    window.open('https://stupify.ai/chat', '_blank');
+    window.open('https://stupify.app/chat', '_blank');
   };
 
   return (
@@ -346,7 +346,7 @@ export const SidePanel: React.FC = () => {
                     </button>
                     {!rateLimiter.canAsk() && (
                       <button
-                        onClick={() => window.open('https://stupify.ai/pricing', '_blank')}
+                        onClick={() => window.open('https://stupify.app/pricing', '_blank')}
                         className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"
                       >
                         Upgrade for unlimited questions →
@@ -393,7 +393,7 @@ export const SidePanel: React.FC = () => {
         <p className="text-xs text-center text-gray-500">
           Made with 💜 by{' '}
           <a
-            href="https://stupify.ai"
+            href="https://stupify.app"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary-600 hover:text-primary-700 font-medium"

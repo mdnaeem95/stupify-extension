@@ -177,7 +177,7 @@ class AuthService {
   async loginWithWebApp(): Promise<void> {
     // Open web app in new tab
     const tab = await chrome.tabs.create({
-      url: `${process.env.VITE_API_URL || 'https://stupify.ai'}/login?redirect=extension`,
+      url: `${process.env.VITE_API_URL || 'https://stupify.app'}/login?redirect=extension`,
     });
 
     // Listen for auth completion
@@ -279,7 +279,7 @@ class AuthService {
     try {
       // Query all tabs to find Stupify web app
       const tabs = await chrome.tabs.query({ 
-        url: `${process.env.VITE_API_URL || 'https://stupify.ai'}/*` 
+        url: `${process.env.VITE_API_URL || 'https://stupify.app'}/*` 
       });
 
       if (tabs.length === 0) {

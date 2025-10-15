@@ -4,9 +4,9 @@ export const APP_NAME = 'Stupify';
 export const APP_VERSION = '1.0.0';
 
 // API Configuration
-export const API_BASE_URL = 'https://stupify.ai/api';
-export const SUPABASE_URL = 'https://your-project.supabase.co'; // TODO: Replace with actual URL
-export const SUPABASE_ANON_KEY = 'your-anon-key'; // TODO: Replace with actual key
+export const API_BASE_URL = 'https://stupify.app/api';
+export const SUPABASE_URL = 'https://uoylkabywklpmuhoxopr.supabase.co'; // TODO: Replace with actual URL
+export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVveWxrYWJ5d2tscG11aG94b3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MjUzNzMsImV4cCI6MjA3NTMwMTM3M30.GDHquoyblmr-tq4Vo-FISoSQejFENnMsFHQg3cTN4fM'; // TODO: Replace with actual key
 
 // Usage Limits
 export const FREE_TIER_DAILY_LIMIT = 3;
@@ -93,14 +93,14 @@ export const KEYBOARD_SHORTCUTS = {
 
 // URLs
 export const URLS = {
-  WEB_APP: 'https://stupify.ai',
-  LOGIN: 'https://stupify.ai/login',
-  SIGNUP: 'https://stupify.ai/signup',
-  DASHBOARD: 'https://stupify.ai/chat',
-  STATS: 'https://stupify.ai/stats',
-  UPGRADE: 'https://stupify.ai/pricing',
-  SUPPORT: 'mailto:support@stupify.ai',
-  PRIVACY: 'https://stupify.ai/privacy',
+  WEB_APP: 'https://stupify.app',
+  LOGIN: 'https://stupify.app/login',
+  SIGNUP: 'https://stupify.app/signup',
+  DASHBOARD: 'https://stupify.app/chat',
+  STATS: 'https://stupify.app/stats',
+  UPGRADE: 'https://stupify.app/pricing',
+  SUPPORT: 'mailto:support@stupify.app',
+  PRIVACY: 'https://stupify.app/privacy',
 } as const;
 
 // Badge Colors

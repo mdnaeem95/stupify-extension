@@ -248,7 +248,7 @@ class OfflineDetector {
    */
   private async checkConnectivity(): Promise<void> {
     try {
-      const response = await fetch('https://stupify.ai/api/health', {
+      const response = await fetch('https://stupify.app/api/health', {
         method: 'HEAD',
         cache: 'no-cache',
       });

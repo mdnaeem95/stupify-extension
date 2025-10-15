@@ -60,7 +60,7 @@ export async function streamChatResponse(
     ];
 
     // Make streaming request
-    const response = await fetch(`${process.env.VITE_API_URL || 'https://stupify.ai'}/api/chat`, {
+    const response = await fetch(`${process.env.VITE_API_URL || 'https://stupify.app'}/api/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

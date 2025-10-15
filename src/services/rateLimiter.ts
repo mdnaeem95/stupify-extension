@@ -300,7 +300,7 @@ class RateLimiterService {
    */
   openPricingPage(): void {
     chrome.tabs.create({
-      url: `${process.env.VITE_API_URL || 'https://stupify.ai'}/pricing?ref=extension`,
+      url: `${process.env.VITE_API_URL || 'https://stupify.app'}/pricing?ref=extension`,
     });
   }
 

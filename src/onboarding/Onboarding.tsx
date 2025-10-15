@@ -136,7 +136,7 @@ export const Onboarding: React.FC = () => {
         <p className="text-center text-sm text-gray-600 mt-6">
           Made with 💜 by{' '}
           <a
-            href="https://stupify.ai"
+            href="https://stupify.app"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary-600 hover:text-primary-700 font-medium"
