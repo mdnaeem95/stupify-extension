@@ -1,5 +1,5 @@
 /**
- * Background Service Worker
+ * Background Service Worker (FIXED - Memory Leak Prevention)
  * 
  * Handles:
  * - Context menu creation
@@ -8,14 +8,11 @@
  * - Auth state synchronization
  * - Analytics event tracking
  * 
- * Service workers are event-driven and don't persist.
- * All state must be stored in chrome.storage.
+ * ✅ FIX: Use chrome.alarms instead of setInterval to prevent memory leaks
  */
 
 import { ChromeMessage } from "@/shared/types";
 import { logger } from "@/shared/utils";
-
-
 
 // Context menu ID
 const CONTEXT_MENU_ID = 'stupify-simplify-text';
@@ -27,15 +24,16 @@ chrome.runtime.onInstalled.addListener((details) => {
   logger.info('Extension installed:', details.reason);
 
   if (details.reason === 'install') {
-    // First install
     handleFirstInstall();
   } else if (details.reason === 'update') {
-    // Extension updated
     handleUpdate(details.previousVersion);
   }
 
   // Create context menu
   createContextMenu();
+
+  // ✅ FIX: Set up alarm for periodic tasks
+  setupPeriodicTasks();
 });
 
 /**
@@ -49,7 +47,7 @@ async function handleFirstInstall(): Promise<void> {
         defaultComplexity: 'normal',
         autoOpenSidePanel: true,
         keyboardShortcutEnabled: true,
-        theme: 'light', // For future use
+        theme: 'light',
       },
       stats: {
         installDate: Date.now(),
@@ -109,8 +107,8 @@ async function handleUpdate(previousVersion?: string): Promise<void> {
  * Run data migrations between versions
  */
 async function runMigrations(fromVersion: string, toVersion: string): Promise<void> {
-  // Add migration logic here when needed
   logger.info('Running migrations:', { fromVersion, toVersion });
+  // Add migration logic here when needed
 }
 
 /**
@@ -120,21 +118,90 @@ function createContextMenu(): void {
   try {
     // Remove existing menu (in case of reload)
     chrome.contextMenus.remove(CONTEXT_MENU_ID, () => {
-      // Ignore error if doesn't exist
-      chrome.runtime.lastError;
+      chrome.runtime.lastError; // Ignore error if doesn't exist
     });
 
     // Create new menu
     chrome.contextMenus.create({
       id: CONTEXT_MENU_ID,
       title: 'Simplify with Stupify',
-      contexts: ['selection'], // Only show when text is selected
-      documentUrlPatterns: ['http://*/*', 'https://*/*'], // All HTTP(S) pages
+      contexts: ['selection'],
+      documentUrlPatterns: ['http://*/*', 'https://*/*'],
     });
 
     logger.info('Context menu created');
   } catch (error) {
     logger.error('Failed to create context menu:', error);
+  }
+}
+
+/**
+ * ✅ FIX: Set up periodic tasks using chrome.alarms (not setInterval)
+ * This allows the service worker to sleep and wake up, saving battery and memory
+ */
+function setupPeriodicTasks(): void {
+  // Flush event queue every 5 minutes
+  chrome.alarms.create('flush-event-queue', {
+    periodInMinutes: 5,
+  });
+
+  // Clean up old data every hour
+  chrome.alarms.create('cleanup-old-data', {
+    periodInMinutes: 60,
+  });
+
+  logger.info('Periodic alarms configured');
+}
+
+/**
+ * ✅ FIX: Handle alarms (replaces setInterval)
+ */
+chrome.alarms.onAlarm.addListener((alarm) => {
+  logger.debug('Alarm triggered:', alarm.name);
+
+  switch (alarm.name) {
+    case 'flush-event-queue':
+      flushEventQueue().catch((error) => {
+        logger.debug('Failed to flush event queue:', error);
+      });
+      break;
+
+    case 'cleanup-old-data':
+      cleanupOldData().catch((error) => {
+        logger.debug('Failed to cleanup old data:', error);
+      });
+      break;
+  }
+});
+
+/**
+ * Clean up old data to prevent unbounded growth
+ */
+async function cleanupOldData(): Promise<void> {
+  try {
+    const { currentSelection, pendingExplanation } = await chrome.storage.local.get([
+      'currentSelection',
+      'pendingExplanation',
+    ]);
+
+    const now = Date.now();
+    const ONE_HOUR = 60 * 60 * 1000;
+
+    // Remove old selection (older than 1 hour)
+    if (currentSelection && now - currentSelection.timestamp > ONE_HOUR) {
+      await chrome.storage.local.remove('currentSelection');
+      logger.debug('Cleaned up old selection');
+    }
+
+    // Remove old pending explanation (older than 1 hour)
+    if (pendingExplanation && now - pendingExplanation.timestamp > ONE_HOUR) {
+      await chrome.storage.local.remove('pendingExplanation');
+      logger.debug('Cleaned up old pending explanation');
+    }
+
+    logger.debug('Old data cleanup complete');
+  } catch (error) {
+    logger.error('Failed to cleanup old data:', error);
   }
 }
 
@@ -190,12 +257,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 });
 
 /**
- * Handle keyboard command (from manifest commands)
+ * Handle keyboard command
  */
 chrome.commands.onCommand.addListener(async (command) => {
   if (command === 'simplify-selection') {
     try {
-      // Get active tab
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       
       if (!tab?.id) {
@@ -214,7 +280,7 @@ chrome.commands.onCommand.addListener(async (command) => {
         return;
       }
 
-      // Open side panel with selection
+      // Open side panel
       await openSidePanel(tab.id, selectedText);
 
       // Track event
@@ -231,13 +297,12 @@ chrome.commands.onCommand.addListener(async (command) => {
 
 /**
  * Open side panel with selected text
- * FIXED: Preserves user gesture, no fallback redirect
  */
 async function openSidePanel(tabId: number, selectedText: string): Promise<void> {
   logger.info('Opening side panel for tab:', tabId);
 
   try {
-    // Store data first (without await to preserve gesture)
+    // Store data first
     chrome.storage.local.set({
       pendingExplanation: {
         text: selectedText,
@@ -247,7 +312,7 @@ async function openSidePanel(tabId: number, selectedText: string): Promise<void>
       logger.error('Failed to store pending explanation:', error);
     });
 
-    // Open side panel immediately (this MUST be synchronous from user gesture)
+    // Open side panel
     await chrome.sidePanel.open({ tabId });
     
     logger.info('✅ Side panel opened successfully');
@@ -257,9 +322,6 @@ async function openSidePanel(tabId: number, selectedText: string): Promise<void>
     });
   } catch (error) {
     logger.error('❌ Failed to open side panel:', error);
-    
-    // Only show error notification, DON'T open web app
-    // Let user try again
     logger.warn('User gesture may have been lost. User should try again.');
   }
 }
@@ -278,7 +340,7 @@ chrome.runtime.onMessage.addListener((message: ChromeMessage, sender, sendRespon
           logger.error('Failed to open side panel:', error);
           sendResponse({ success: false, error: error.message });
         });
-      return true; // Async response
+      return true;
 
     case 'TRACK_EVENT':
       trackEvent(message.payload.event, message.payload.properties);
@@ -292,7 +354,7 @@ chrome.runtime.onMessage.addListener((message: ChromeMessage, sender, sendRespon
           logger.error('Failed to get auth state:', error);
           sendResponse({ auth: null });
         });
-      return true; // Async response
+      return true;
 
     case 'SET_AUTH_STATE':
       setAuthState(message.payload)
@@ -301,7 +363,7 @@ chrome.runtime.onMessage.addListener((message: ChromeMessage, sender, sendRespon
           logger.error('Failed to set auth state:', error);
           sendResponse({ success: false, error: error.message });
         });
-      return true; // Async response
+      return true;
 
     case 'CLEAR_AUTH_STATE':
       clearAuthState()
@@ -310,7 +372,7 @@ chrome.runtime.onMessage.addListener((message: ChromeMessage, sender, sendRespon
           logger.error('Failed to clear auth state:', error);
           sendResponse({ success: false, error: error.message });
         });
-      return true; // Async response
+      return true;
 
     default:
       logger.warn('Unknown message type:', message.type);
@@ -367,7 +429,7 @@ async function trackEvent(event: string, properties?: Record<string, any>): Prom
       await chrome.storage.local.set({ analyticsId });
     }
 
-    // Add event to queue (will be sent to analytics API)
+    // Add event to queue
     const { eventQueue = [] } = await chrome.storage.local.get('eventQueue');
     
     eventQueue.push({
@@ -427,13 +489,6 @@ async function flushEventQueue(): Promise<void> {
     logger.debug('Failed to flush event queue:', error);
   }
 }
-
-/**
- * Periodic cleanup (every 5 minutes)
- */
-setInterval(() => {
-  flushEventQueue().catch(() => {});
-}, 5 * 60 * 1000);
 
 // Export for testing
 export {

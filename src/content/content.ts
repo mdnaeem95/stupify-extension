@@ -1,5 +1,5 @@
 /**
- * Content Script - Main Entry Point
+ * Content Script - Main Entry Point (FIXED - Memory Leak Prevention)
  * 
  * This script runs on every webpage and:
  * - Detects text selection
@@ -7,7 +7,7 @@
  * - Manages context menu integration
  * - Communicates with background service worker
  * 
- * Injected at document_idle for optimal performance
+ * ✅ FIX: Proper event listener cleanup to prevent memory leaks
  */
 
 import { logger } from '@/shared/utils';
@@ -19,9 +19,16 @@ import "./styles.css";
 const MIN_SELECTION_LENGTH = 10;
 const MAX_SELECTION_LENGTH = 5000;
 const KEYBOARD_SHORTCUT = { key: 's', ctrlKey: true, shiftKey: true };
+const MAX_NOTIFICATIONS = 3;
 
 // Initialize selection handler
 let selectionHandler: SelectionHandler | null = null;
+
+// ✅ FIX: Store listener references for cleanup
+let keydownHandler: ((event: KeyboardEvent) => void) | null = null;
+let messageListener: ((message: any, sender: any, sendResponse: any) => boolean) | null = null;
+let visibilityHandler: (() => void) | null = null;
+let activeNotifications: HTMLElement[] = [];
 
 /**
  * Check if chrome.storage is available
@@ -42,7 +49,6 @@ function init(): void {
     // Verify chrome.storage is available
     if (!isChromeStorageAvailable()) {
       logger.error('chrome.storage is not available. Extension may not work correctly.');
-      // Continue initialization but with limited functionality
     }
 
     // Create selection handler
@@ -58,7 +64,7 @@ function init(): void {
     // Set up context menu message listener
     setupMessageListener();
 
-    // Set up page visibility listener (pause when tab hidden)
+    // Set up page visibility listener
     setupVisibilityListener();
 
     logger.info('Content script initialized successfully');
@@ -83,8 +89,7 @@ function handleSelectionChange(selectedText: string): void {
       selectedText = selectedText.substring(0, MAX_SELECTION_LENGTH);
     }
 
-    // Store current selection for context menu
-    // Check if chrome.storage is available before using it
+    // Store current selection
     if (isChromeStorageAvailable()) {
       chrome.storage.local.set({
         currentSelection: {
@@ -102,7 +107,7 @@ function handleSelectionChange(selectedText: string): void {
         domain: window.location.hostname,
       });
     } else {
-      logger.warn('chrome.storage not available, selection not stored');
+      logger.warn('chrome.storage not available');
     }
   } catch (error) {
     logger.error('Failed to handle selection change:', error);
@@ -111,9 +116,10 @@ function handleSelectionChange(selectedText: string): void {
 
 /**
  * Set up keyboard shortcut (Cmd+Shift+S / Ctrl+Shift+S)
+ * ✅ FIX: Store handler reference for cleanup
  */
 function setupKeyboardShortcut(): void {
-  document.addEventListener('keydown', (event: KeyboardEvent) => {
+  keydownHandler = (event: KeyboardEvent) => {
     // Check if shortcut matches
     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
     const modifierKey = isMac ? event.metaKey : event.ctrlKey;
@@ -125,11 +131,11 @@ function setupKeyboardShortcut(): void {
     ) {
       event.preventDefault();
       event.stopPropagation();
-
       handleShortcutTrigger();
     }
-  });
+  };
 
+  document.addEventListener('keydown', keydownHandler);
   logger.info('Keyboard shortcut registered');
 }
 
@@ -141,7 +147,6 @@ async function handleShortcutTrigger(): Promise<void> {
     const selectedText = selectionHandler?.getSelectedText();
 
     if (!selectedText || selectedText.length < MIN_SELECTION_LENGTH) {
-      // Show notification that selection is too short
       showNotification('Please select at least 10 characters', 'warning');
       return;
     }
@@ -155,7 +160,7 @@ async function handleShortcutTrigger(): Promise<void> {
           trigger: 'keyboard_shortcut',
         },
       }).catch((error) => {
-        logger.error('Failed to send message to background:', error);
+        logger.error('Failed to send message:', error);
         showNotification('Failed to open side panel. Please try again.', 'error');
       });
 
@@ -186,10 +191,11 @@ async function handleShortcutTrigger(): Promise<void> {
 
 /**
  * Set up message listener for context menu clicks
+ * ✅ FIX: Store handler reference for cleanup
  */
 function setupMessageListener(): void {
   if (typeof chrome !== 'undefined' && chrome.runtime) {
-    chrome.runtime.onMessage.addListener((message: ChromeMessage, sender, sendResponse) => {
+    messageListener = (message: ChromeMessage, sender, sendResponse) => {
       try {
         if (message.type === 'CONTEXT_MENU_CLICKED') {
           handleContextMenuClick();
@@ -201,18 +207,18 @@ function setupMessageListener(): void {
           sendResponse({ text: selectedText });
         }
 
-        // Return true to indicate async response
         return true;
       } catch (error) {
         logger.error('Error in message listener:', error, sender);
         sendResponse({ success: false, error: String(error) });
         return false;
       }
-    });
+    };
 
+    chrome.runtime.onMessage.addListener(messageListener);
     logger.info('Message listener registered');
   } else {
-    logger.error('chrome.runtime not available, message listener not registered');
+    logger.error('chrome.runtime not available');
   }
 }
 
@@ -221,7 +227,6 @@ function setupMessageListener(): void {
  */
 async function handleContextMenuClick(): Promise<void> {
   try {
-    // Get current selection from storage (set by context menu)
     if (!isChromeStorageAvailable()) {
       logger.error('chrome.storage not available');
       showNotification('Extension storage not available', 'error');
@@ -236,7 +241,7 @@ async function handleContextMenuClick(): Promise<void> {
       return;
     }
 
-    // Send message to background to open side panel
+    // Send message to background
     if (typeof chrome !== 'undefined' && chrome.runtime) {
       chrome.runtime.sendMessage({
         type: 'OPEN_SIDE_PANEL',
@@ -245,7 +250,7 @@ async function handleContextMenuClick(): Promise<void> {
           trigger: 'context_menu',
         },
       }).catch((error) => {
-        logger.error('Failed to send message to background:', error);
+        logger.error('Failed to send message:', error);
         showNotification('Failed to open side panel. Please try again.', 'error');
       });
 
@@ -276,9 +281,10 @@ async function handleContextMenuClick(): Promise<void> {
 
 /**
  * Set up page visibility listener
+ * ✅ FIX: Store handler reference for cleanup
  */
 function setupVisibilityListener(): void {
-  document.addEventListener('visibilitychange', () => {
+  visibilityHandler = () => {
     if (document.hidden) {
       // Pause selection tracking when tab is hidden
       selectionHandler?.pause();
@@ -288,13 +294,26 @@ function setupVisibilityListener(): void {
       selectionHandler?.resume();
       logger.debug('Selection tracking resumed (tab visible)');
     }
-  });
+  };
+
+  document.addEventListener('visibilitychange', visibilityHandler);
 }
 
 /**
  * Show in-page notification
+ * ✅ FIX: Limit max notifications to prevent accumulation
  */
 function showNotification(message: string, type: 'success' | 'warning' | 'error'): void {
+  // Remove oldest if at limit
+  if (activeNotifications.length >= MAX_NOTIFICATIONS) {
+    const oldest = activeNotifications.shift();
+    if (oldest) {
+      const timeoutId = (oldest as any).__timeoutId;
+      if (timeoutId) clearTimeout(timeoutId);
+      oldest.remove();
+    }
+  }
+
   // Create notification element
   const notification = document.createElement('div');
   notification.className = 'stupify-notification';
@@ -362,20 +381,60 @@ function showNotification(message: string, type: 'success' | 'warning' | 'error'
 
   // Add to page
   document.body.appendChild(notification);
+  activeNotifications.push(notification);
 
   // Remove after 3 seconds
-  setTimeout(() => {
+  const timeoutId = setTimeout(() => {
     notification.style.animation = 'stupify-slide-out 0.3s ease-in';
-    setTimeout(() => notification.remove(), 300);
+    setTimeout(() => {
+      notification.remove();
+      // Remove from tracking
+      activeNotifications = activeNotifications.filter(n => n !== notification);
+    }, 300);
   }, 3000);
+
+  // Store timeout for potential cleanup
+  (notification as any).__timeoutId = timeoutId;
 }
 
 /**
  * Clean up on page unload
+ * ✅ FIX: Properly remove all event listeners
  */
 function cleanup(): void {
-  selectionHandler?.destroy();
-  logger.info('Content script cleaned up');
+  logger.info('Cleaning up content script...');
+
+  // Remove event listeners
+  if (keydownHandler) {
+    document.removeEventListener('keydown', keydownHandler);
+    keydownHandler = null;
+  }
+
+  if (messageListener && chrome?.runtime?.onMessage) {
+    chrome.runtime.onMessage.removeListener(messageListener);
+    messageListener = null;
+  }
+
+  if (visibilityHandler) {
+    document.removeEventListener('visibilitychange', visibilityHandler);
+    visibilityHandler = null;
+  }
+
+  // Clear all notifications
+  activeNotifications.forEach(notification => {
+    const timeoutId = (notification as any).__timeoutId;
+    if (timeoutId) clearTimeout(timeoutId);
+    notification.remove();
+  });
+  activeNotifications = [];
+
+  // Clean up selection handler
+  if (selectionHandler) {
+    selectionHandler.destroy();
+    selectionHandler = null;
+  }
+
+  logger.info('Content script cleaned up ✅');
 }
 
 // Initialize when DOM is ready

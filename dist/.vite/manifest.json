@@ -1,168 +1,190 @@
 {
   "../../../../../@crx/manifest": {
-    "file": "assets/crx-manifest.js-_pAlRly7.js",
+    "file": "assets/crx-manifest.js-BexToc8m.js",
     "name": "crx-manifest.js",
     "src": "../../../../../@crx/manifest",
     "isEntry": true
   },
-  "_check-DTC6RNqm.js": {
-    "file": "assets/check-DTC6RNqm.js",
-    "name": "check",
-    "imports": [
-      "_globals-DvHHdZrZ.js"
-    ]
+  "_globals-!~{007}~.js": {
+    "file": "assets/globals-COlbRcrS.css",
+    "src": "_globals-!~{007}~.js"
   },
-  "_chevron-right-zVMNHD0m.js": {
-    "file": "assets/chevron-right-zVMNHD0m.js",
-    "name": "chevron-right",
-    "imports": [
-      "_globals-DvHHdZrZ.js"
-    ]
-  },
-  "_globals-!~{006}~.js": {
-    "file": "assets/globals-D_QDQxKa.css",
-    "src": "_globals-!~{006}~.js"
-  },
-  "_globals-DvHHdZrZ.js": {
-    "file": "assets/globals-DvHHdZrZ.js",
+  "_globals-CZNwFqmC.js": {
+    "file": "assets/globals-CZNwFqmC.js",
     "name": "globals",
     "css": [
-      "assets/globals-D_QDQxKa.css"
+      "assets/globals-COlbRcrS.css"
     ]
   },
-  "_index-BfHZb2yA.js": {
-    "file": "assets/index-BfHZb2yA.js",
+  "_icons-Ds2rf53u.js": {
+    "file": "assets/icons-Ds2rf53u.js",
+    "name": "icons",
+    "imports": [
+      "_react-vendor-HEOWGPvr.js"
+    ]
+  },
+  "_index-CHG-xMVD.js": {
+    "file": "assets/index-CHG-xMVD.js",
     "name": "index",
     "imports": [
-      "_globals-DvHHdZrZ.js",
-      "_rateLimiter-CeXPzy5c.js",
-      "_sparkles-CQiXILgo.js",
-      "_check-DTC6RNqm.js",
-      "_utils-edMwt5UB.js",
-      "_chevron-right-zVMNHD0m.js"
+      "_react-vendor-HEOWGPvr.js",
+      "_icons-Ds2rf53u.js",
+      "_store-5ItP4VQq.js",
+      "_rateLimiter-L6ZkJs0D.js",
+      "_globals-CZNwFqmC.js"
+    ],
+    "dynamicImports": [
+      "src/components/StatsWidget.tsx",
+      "src/components/ActionButtons.tsx",
+      "src/components/FollowUpQuestions.tsx",
+      "src/components/ErrorState.tsx",
+      "src/components/EmptyState.tsx",
+      "src/components/FollowUpQuestions.tsx",
+      "src/components/ActionButtons.tsx"
     ]
   },
-  "_index-CCdhnJMJ.js": {
-    "file": "assets/index-CCdhnJMJ.js",
+  "_index-khbzWRIA.js": {
+    "file": "assets/index-khbzWRIA.js",
     "name": "index",
     "imports": [
-      "_globals-DvHHdZrZ.js",
-      "_rateLimiter-CeXPzy5c.js",
-      "_sparkles-CQiXILgo.js"
+      "_react-vendor-HEOWGPvr.js",
+      "_rateLimiter-L6ZkJs0D.js",
+      "_icons-Ds2rf53u.js",
+      "_globals-CZNwFqmC.js"
     ]
   },
-  "_index-D3FOPadw.js": {
-    "file": "assets/index-D3FOPadw.js",
-    "name": "index",
+  "_rateLimiter-L6ZkJs0D.js": {
+    "file": "assets/rateLimiter-L6ZkJs0D.js",
+    "name": "rateLimiter"
+  },
+  "_react-vendor-HEOWGPvr.js": {
+    "file": "assets/react-vendor-HEOWGPvr.js",
+    "name": "react-vendor"
+  },
+  "_store-5ItP4VQq.js": {
+    "file": "assets/store-5ItP4VQq.js",
+    "name": "store",
     "imports": [
-      "_globals-DvHHdZrZ.js",
-      "_utils-edMwt5UB.js",
-      "_check-DTC6RNqm.js",
-      "_zap-BBMCCmo9.js",
-      "_chevron-right-zVMNHD0m.js"
+      "_react-vendor-HEOWGPvr.js"
     ]
   },
-  "_rateLimiter-CeXPzy5c.js": {
-    "file": "assets/rateLimiter-CeXPzy5c.js",
-    "name": "rateLimiter",
-    "imports": [
-      "_globals-DvHHdZrZ.js"
-    ]
-  },
-  "_sparkles-CQiXILgo.js": {
-    "file": "assets/sparkles-CQiXILgo.js",
-    "name": "sparkles",
-    "imports": [
-      "_globals-DvHHdZrZ.js"
-    ]
-  },
-  "_utils-edMwt5UB.js": {
-    "file": "assets/utils-edMwt5UB.js",
+  "_utils-CJJeYulS.js": {
+    "file": "assets/utils-CJJeYulS.js",
     "name": "utils"
   },
-  "_zap-BBMCCmo9.js": {
-    "file": "assets/zap-BBMCCmo9.js",
-    "name": "zap",
-    "imports": [
-      "_globals-DvHHdZrZ.js"
-    ]
-  },
   "content.ts-loader.js": {
-    "file": "assets/content.ts-loader-BsJmwOy7.js",
+    "file": "assets/content.ts-loader-D1fGtGyE.js",
     "src": "content.ts-loader.js"
   },
-  "onboarding.html": {
-    "file": "assets/onboarding-BYeSDpTf.js",
-    "name": "onboarding",
-    "src": "onboarding.html",
-    "isEntry": true,
-    "imports": [
-      "_globals-DvHHdZrZ.js",
-      "_check-DTC6RNqm.js",
-      "_zap-BBMCCmo9.js",
-      "_sparkles-CQiXILgo.js"
-    ]
-  },
   "popup.html": {
-    "file": "assets/popup.html-Du8E3pIu.js",
+    "file": "assets/popup.html-y2vOGbi3.js",
     "name": "popup.html",
     "src": "popup.html",
     "isEntry": true,
     "imports": [
-      "_globals-DvHHdZrZ.js",
-      "_index-CCdhnJMJ.js",
-      "_rateLimiter-CeXPzy5c.js",
-      "_sparkles-CQiXILgo.js"
+      "_globals-CZNwFqmC.js",
+      "_index-khbzWRIA.js",
+      "_react-vendor-HEOWGPvr.js",
+      "_rateLimiter-L6ZkJs0D.js",
+      "_icons-Ds2rf53u.js"
     ]
   },
   "settings.html": {
-    "file": "assets/settings.html-DOkI9011.js",
+    "file": "assets/settings.html-CvscF7BZ.js",
     "name": "settings.html",
     "src": "settings.html",
     "isEntry": true,
     "imports": [
-      "_globals-DvHHdZrZ.js",
-      "_index-D3FOPadw.js",
-      "_utils-edMwt5UB.js",
-      "_check-DTC6RNqm.js",
-      "_zap-BBMCCmo9.js",
-      "_chevron-right-zVMNHD0m.js"
+      "_globals-CZNwFqmC.js",
+      "_react-vendor-HEOWGPvr.js",
+      "_utils-CJJeYulS.js",
+      "_icons-Ds2rf53u.js"
     ]
   },
   "sidepanel.html": {
-    "file": "assets/sidepanel.html-ItIj7Gbx.js",
+    "file": "assets/sidepanel.html-DmDSOTjV.js",
     "name": "sidepanel.html",
     "src": "sidepanel.html",
     "isEntry": true,
     "imports": [
-      "_globals-DvHHdZrZ.js",
-      "_index-BfHZb2yA.js",
-      "_rateLimiter-CeXPzy5c.js",
-      "_sparkles-CQiXILgo.js",
-      "_check-DTC6RNqm.js",
-      "_utils-edMwt5UB.js",
-      "_chevron-right-zVMNHD0m.js"
+      "_globals-CZNwFqmC.js",
+      "_index-CHG-xMVD.js",
+      "_react-vendor-HEOWGPvr.js",
+      "_icons-Ds2rf53u.js",
+      "_store-5ItP4VQq.js",
+      "_rateLimiter-L6ZkJs0D.js"
     ]
   },
   "src/background/service-worker.ts": {
-    "file": "assets/service-worker.ts-COVSbir-.js",
+    "file": "assets/service-worker.ts-CpMwdUhf.js",
     "name": "service-worker.ts",
     "src": "src/background/service-worker.ts",
     "isEntry": true,
     "imports": [
-      "_utils-edMwt5UB.js"
+      "_utils-CJJeYulS.js"
+    ]
+  },
+  "src/components/ActionButtons.tsx": {
+    "file": "assets/ActionButtons-DGqGL83W.js",
+    "name": "ActionButtons",
+    "src": "src/components/ActionButtons.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-HEOWGPvr.js",
+      "_icons-Ds2rf53u.js"
+    ]
+  },
+  "src/components/EmptyState.tsx": {
+    "file": "assets/EmptyState-BZE4_ODg.js",
+    "name": "EmptyState",
+    "src": "src/components/EmptyState.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-HEOWGPvr.js",
+      "_icons-Ds2rf53u.js"
+    ]
+  },
+  "src/components/ErrorState.tsx": {
+    "file": "assets/ErrorState-BOXt7A56.js",
+    "name": "ErrorState",
+    "src": "src/components/ErrorState.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-HEOWGPvr.js",
+      "_icons-Ds2rf53u.js"
+    ]
+  },
+  "src/components/FollowUpQuestions.tsx": {
+    "file": "assets/FollowUpQuestions-BZHEocKu.js",
+    "name": "FollowUpQuestions",
+    "src": "src/components/FollowUpQuestions.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-HEOWGPvr.js",
+      "_icons-Ds2rf53u.js"
+    ]
+  },
+  "src/components/StatsWidget.tsx": {
+    "file": "assets/StatsWidget-D5saS48o.js",
+    "name": "StatsWidget",
+    "src": "src/components/StatsWidget.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-vendor-HEOWGPvr.js",
+      "_utils-CJJeYulS.js",
+      "_icons-Ds2rf53u.js"
     ]
   },
   "src/content/content.ts": {
-    "file": "assets/content.ts-Bc0Pjf1X.js",
+    "file": "assets/content.ts-BxlK9Ra9.js",
     "name": "content.ts",
     "src": "src/content/content.ts",
     "isEntry": true,
     "imports": [
-      "_utils-edMwt5UB.js"
+      "_utils-CJJeYulS.js"
     ],
     "css": [
-      "assets/content-CDcEXQb2.css"
+      "assets/content-1R-n2LkE.css"
     ]
   }
 }
