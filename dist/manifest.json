@@ -28,7 +28,7 @@
   "content_scripts": [
     {
       "js": [
-        "assets/content.ts-loader-D1fGtGyE.js"
+        "assets/content.ts-loader-BJPIPDpV.js"
       ],
       "matches": [
         "<all_urls>"
@@ -76,7 +76,7 @@
         "onboarding.html",
         "settings.html",
         "assets/utils-CJJeYulS.js",
-        "assets/content.ts-BxlK9Ra9.js"
+        "assets/content.ts-it6vUiEX.js"
       ],
       "use_dynamic_url": false
     }

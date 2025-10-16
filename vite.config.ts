@@ -19,6 +19,7 @@ export default defineConfig({
       input: {
         popup: 'popup.html',
         sidepanel: 'sidepanel.html',
+        onboarding: 'onboarding.html',
       },
       output: {
         // Manual chunks for better caching and code splitting

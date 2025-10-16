@@ -5,9 +5,9 @@
     "src": "../../../../../@crx/manifest",
     "isEntry": true
   },
-  "_globals-!~{007}~.js": {
+  "_globals-!~{008}~.js": {
     "file": "assets/globals-COlbRcrS.css",
-    "src": "_globals-!~{007}~.js"
+    "src": "_globals-!~{008}~.js"
   },
   "_globals-CZNwFqmC.js": {
     "file": "assets/globals-CZNwFqmC.js",
@@ -16,19 +16,19 @@
       "assets/globals-COlbRcrS.css"
     ]
   },
-  "_icons-Ds2rf53u.js": {
-    "file": "assets/icons-Ds2rf53u.js",
+  "_icons-D19DpaoO.js": {
+    "file": "assets/icons-D19DpaoO.js",
     "name": "icons",
     "imports": [
       "_react-vendor-HEOWGPvr.js"
     ]
   },
-  "_index-CHG-xMVD.js": {
-    "file": "assets/index-CHG-xMVD.js",
+  "_index-D5omXgtp.js": {
+    "file": "assets/index-D5omXgtp.js",
     "name": "index",
     "imports": [
       "_react-vendor-HEOWGPvr.js",
-      "_icons-Ds2rf53u.js",
+      "_icons-D19DpaoO.js",
       "_store-5ItP4VQq.js",
       "_rateLimiter-L6ZkJs0D.js",
       "_globals-CZNwFqmC.js"
@@ -43,13 +43,13 @@
       "src/components/ActionButtons.tsx"
     ]
   },
-  "_index-khbzWRIA.js": {
-    "file": "assets/index-khbzWRIA.js",
+  "_index-FBg1Qvgk.js": {
+    "file": "assets/index-FBg1Qvgk.js",
     "name": "index",
     "imports": [
       "_react-vendor-HEOWGPvr.js",
       "_rateLimiter-L6ZkJs0D.js",
-      "_icons-Ds2rf53u.js",
+      "_icons-D19DpaoO.js",
       "_globals-CZNwFqmC.js"
     ]
   },
@@ -73,24 +73,35 @@
     "name": "utils"
   },
   "content.ts-loader.js": {
-    "file": "assets/content.ts-loader-D1fGtGyE.js",
+    "file": "assets/content.ts-loader-BJPIPDpV.js",
     "src": "content.ts-loader.js"
   },
+  "onboarding.html": {
+    "file": "assets/onboarding-BWxF8GCt.js",
+    "name": "onboarding",
+    "src": "onboarding.html",
+    "isEntry": true,
+    "imports": [
+      "_globals-CZNwFqmC.js",
+      "_react-vendor-HEOWGPvr.js",
+      "_icons-D19DpaoO.js"
+    ]
+  },
   "popup.html": {
-    "file": "assets/popup.html-y2vOGbi3.js",
+    "file": "assets/popup.html-fnFuy75T.js",
     "name": "popup.html",
     "src": "popup.html",
     "isEntry": true,
     "imports": [
       "_globals-CZNwFqmC.js",
-      "_index-khbzWRIA.js",
+      "_index-FBg1Qvgk.js",
       "_react-vendor-HEOWGPvr.js",
       "_rateLimiter-L6ZkJs0D.js",
-      "_icons-Ds2rf53u.js"
+      "_icons-D19DpaoO.js"
     ]
   },
   "settings.html": {
-    "file": "assets/settings.html-CvscF7BZ.js",
+    "file": "assets/settings.html-kkv87Oep.js",
     "name": "settings.html",
     "src": "settings.html",
     "isEntry": true,
@@ -98,25 +109,25 @@
       "_globals-CZNwFqmC.js",
       "_react-vendor-HEOWGPvr.js",
       "_utils-CJJeYulS.js",
-      "_icons-Ds2rf53u.js"
+      "_icons-D19DpaoO.js"
     ]
   },
   "sidepanel.html": {
-    "file": "assets/sidepanel.html-DmDSOTjV.js",
+    "file": "assets/sidepanel.html-BT5mu73U.js",
     "name": "sidepanel.html",
     "src": "sidepanel.html",
     "isEntry": true,
     "imports": [
       "_globals-CZNwFqmC.js",
-      "_index-CHG-xMVD.js",
+      "_index-D5omXgtp.js",
       "_react-vendor-HEOWGPvr.js",
-      "_icons-Ds2rf53u.js",
+      "_icons-D19DpaoO.js",
       "_store-5ItP4VQq.js",
       "_rateLimiter-L6ZkJs0D.js"
     ]
   },
   "src/background/service-worker.ts": {
-    "file": "assets/service-worker.ts-CpMwdUhf.js",
+    "file": "assets/service-worker.ts-CZVbTR1t.js",
     "name": "service-worker.ts",
     "src": "src/background/service-worker.ts",
     "isEntry": true,
@@ -125,58 +136,58 @@
     ]
   },
   "src/components/ActionButtons.tsx": {
-    "file": "assets/ActionButtons-DGqGL83W.js",
+    "file": "assets/ActionButtons-Dm50-Ogh.js",
     "name": "ActionButtons",
     "src": "src/components/ActionButtons.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_react-vendor-HEOWGPvr.js",
-      "_icons-Ds2rf53u.js"
+      "_icons-D19DpaoO.js"
     ]
   },
   "src/components/EmptyState.tsx": {
-    "file": "assets/EmptyState-BZE4_ODg.js",
+    "file": "assets/EmptyState-vUfaVptD.js",
     "name": "EmptyState",
     "src": "src/components/EmptyState.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_react-vendor-HEOWGPvr.js",
-      "_icons-Ds2rf53u.js"
+      "_icons-D19DpaoO.js"
     ]
   },
   "src/components/ErrorState.tsx": {
-    "file": "assets/ErrorState-BOXt7A56.js",
+    "file": "assets/ErrorState-Bz3fd78Q.js",
     "name": "ErrorState",
     "src": "src/components/ErrorState.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_react-vendor-HEOWGPvr.js",
-      "_icons-Ds2rf53u.js"
+      "_icons-D19DpaoO.js"
     ]
   },
   "src/components/FollowUpQuestions.tsx": {
-    "file": "assets/FollowUpQuestions-BZHEocKu.js",
+    "file": "assets/FollowUpQuestions-BPVeivTU.js",
     "name": "FollowUpQuestions",
     "src": "src/components/FollowUpQuestions.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_react-vendor-HEOWGPvr.js",
-      "_icons-Ds2rf53u.js"
+      "_icons-D19DpaoO.js"
     ]
   },
   "src/components/StatsWidget.tsx": {
-    "file": "assets/StatsWidget-D5saS48o.js",
+    "file": "assets/StatsWidget-pagOTyWU.js",
     "name": "StatsWidget",
     "src": "src/components/StatsWidget.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_react-vendor-HEOWGPvr.js",
       "_utils-CJJeYulS.js",
-      "_icons-Ds2rf53u.js"
+      "_icons-D19DpaoO.js"
     ]
   },
   "src/content/content.ts": {
-    "file": "assets/content.ts-BxlK9Ra9.js",
+    "file": "assets/content.ts-it6vUiEX.js",
     "name": "content.ts",
     "src": "src/content/content.ts",
     "isEntry": true,
