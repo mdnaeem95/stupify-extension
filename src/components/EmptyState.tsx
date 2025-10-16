@@ -2,11 +2,9 @@
  * Empty State Component
  * Shows helpful instructions when no text is selected
  */
-
-import React from 'react';
 import { MousePointerClick, Command } from 'lucide-react';
 
-export const EmptyState: React.FC = () => {
+export default function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
       <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-4">

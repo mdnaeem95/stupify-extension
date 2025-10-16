@@ -3,7 +3,7 @@
  * Copy, Share, and Open in App actions
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Copy, Share2, ExternalLink, Check } from 'lucide-react';
 
 interface ActionButtonsProps {
@@ -11,10 +11,7 @@ interface ActionButtonsProps {
   onOpenInApp?: () => void;
 }
 
-export const ActionButtons: React.FC<ActionButtonsProps> = ({
-  response,
-  onOpenInApp,
-}) => {
+export default function ActionButtons({ response, onOpenInApp }: ActionButtonsProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {

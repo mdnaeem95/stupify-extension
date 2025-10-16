@@ -1,13 +1,14 @@
 /**
- * Authentication Service
+ * Authentication Service - WITH MEMORY CLEANUP
  * 
  * Handles authentication flows for the Chrome extension
  * - Login/logout
  * - Token management
  * - Session persistence
  * - Sync with web app
+ * - ✅ Auto-cleanup to prevent memory leaks
  * 
- * FIXED: Now listens to storage changes to sync across contexts
+ * FIXED: Now properly cleans up all listeners
  */
 
 import { apiClient } from './api';
@@ -30,28 +31,34 @@ class AuthService {
     loading: true,
   };
 
+  // ✅ Store listener references for cleanup
+  private messageListener: ((message: any, sender: any, sendResponse: any) => void) | null = null;
+  private storageListener: ((changes: any, areaName: string) => void) | null = null;
+
   constructor() {
     this.initialize();
   }
 
   /**
    * Initialize auth service
-   * FIXED: Now listens to storage changes for cross-context sync
+   * ✅ FIXED: Store listener references for cleanup
    */
   private async initialize(): Promise<void> {
     await this.checkAuthStatus();
     
-    // Listen for auth changes from background script
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    // ✅ Store message listener reference
+    this.messageListener = (message: any, sender: any, sendResponse: any) => {
       if (message.type === 'AUTH_STATE_CHANGED') {
         console.log('📨 AUTH_STATE_CHANGED message received', sender, sendResponse);
         this.checkAuthStatus();
       }
-    });
+    };
 
-    // CRITICAL: Listen for storage changes across all contexts
-    // This ensures popup, sidepanel, and background stay in sync
-    chrome.storage.onChanged.addListener((changes, areaName) => {
+    // Listen for auth changes from background script
+    chrome.runtime.onMessage.addListener(this.messageListener);
+
+    // ✅ Store storage listener reference
+    this.storageListener = (changes: any, areaName: string) => {
       if (areaName === 'local' && changes.auth) {
         console.log('🔄 Auth storage changed in SidePanel!', {
           had: !!changes.auth.oldValue,
@@ -59,7 +66,11 @@ class AuthService {
         });
         this.checkAuthStatus();
       }
-    });
+    };
+
+    // CRITICAL: Listen for storage changes across all contexts
+    // This ensures popup, sidepanel, and background stay in sync
+    chrome.storage.onChanged.addListener(this.storageListener);
 
     console.log('✅ Auth service initialized');
   }
@@ -309,7 +320,6 @@ class AuthService {
 
   /**
    * Sync auth state with web app
-   * FIXED: Save to nested auth structure
    */
   async syncWithWebApp(): Promise<void> {
     try {
@@ -336,7 +346,7 @@ class AuthService {
             if (response && response.isAuthenticated) {
               console.log('✅ Got auth state from web app, saving...');
               
-              // FIXED: Save to nested auth structure
+              // Save to nested auth structure
               await chrome.storage.local.set({
                 auth: {
                   accessToken: response.accessToken,
@@ -378,7 +388,45 @@ class AuthService {
   getUserId(): string | null {
     return this.currentState.user?.id || null;
   }
+
+  /**
+   * ✅ Cleanup - Prevents memory leaks
+   */
+  destroy(): void {
+    // Remove message listener
+    if (this.messageListener) {
+      chrome.runtime.onMessage.removeListener(this.messageListener);
+      this.messageListener = null;
+      console.log('🧹 Removed message listener');
+    }
+
+    // Remove storage listener
+    if (this.storageListener) {
+      chrome.storage.onChanged.removeListener(this.storageListener);
+      this.storageListener = null;
+      console.log('🧹 Removed storage listener');
+    }
+
+    // Clear all listeners
+    this.listeners.clear();
+
+    console.log('🧹 AuthService cleaned up');
+  }
 }
 
 // Export singleton instance
 export const authService = new AuthService();
+
+// ✅ Auto-cleanup on extension unload
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    authService.destroy();
+  });
+}
+
+// ✅ Auto-cleanup on Chrome extension suspend
+if (typeof chrome !== 'undefined' && chrome.runtime?.onSuspend) {
+  chrome.runtime.onSuspend.addListener(() => {
+    authService.destroy();
+  });
+}

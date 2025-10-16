@@ -376,5 +376,19 @@ class RateLimiterService {
 // Export singleton instance
 export const rateLimiter = new RateLimiterService();
 
+// Auto-cleanup on extension unload
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    rateLimiter.destroy();
+  });
+}
+
+// Also cleanup when browser tab closes
+if (typeof chrome !== 'undefined') {
+  chrome.runtime.onSuspend?.addListener(() => {
+    rateLimiter.destroy();
+  });
+}
+
 // Export types
 export type { UsageState };

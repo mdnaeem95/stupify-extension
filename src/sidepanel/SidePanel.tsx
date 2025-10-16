@@ -6,10 +6,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { ComplexitySelector } from '../components/ComplexitySelector';
 import { StreamingResponse } from '../components/StreamingResponse';
-import { FollowUpQuestions } from '../components/FollowUpQuestions';
-import { ActionButtons } from '../components/ActionButtons';
-import { ErrorState } from '../components/ErrorState';
-import { EmptyState } from '../components/EmptyState';
 import { Globe, ChevronDown, ChevronUp, LogIn } from 'lucide-react';
 import { useSidePanelStore } from '@/stores/useSidePanelStore';
 import { FollowUpQuestion } from '@/shared/sidepanel';
@@ -21,7 +17,24 @@ import {
   followUpService,
   cacheService,
 } from '../services';
-import { StatsWidget } from '@/components/StatsWidget';
+
+import { lazyLoad, preloadComponent } from '@/utils/lazyLoad';
+
+const StatsWidget = lazyLoad(() => import('@/components/StatsWidget'), {
+  loading: () => (
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <div className="animate-pulse space-y-3">
+        <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+        <div className="h-8 bg-gray-200 rounded"></div>
+      </div>
+    </div>
+  ),
+});
+
+const ActionButtons = lazyLoad(() => import('@/components/ActionButtons'));
+const FollowUpQuestions = lazyLoad(() => import('@/components/FollowUpQuestions'));
+const ErrorState = lazyLoad(() => import('@/components/ErrorState'));
+const EmptyState = lazyLoad(() => import('@/components/EmptyState'));
 
 export const SidePanel: React.FC = () => {
   const {
@@ -46,6 +59,14 @@ export const SidePanel: React.FC = () => {
   const [isPremium, setIsPremium] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const cancellerRef = useRef<{ cancel: () => void } | null>(null);
+
+  const preloadFollowUps = () => {
+    preloadComponent(() => import('@/components/FollowUpQuestions'));
+  };
+
+  const preloadActions = () => {
+    preloadComponent(() => import('@/components/ActionButtons'));
+  };
 
   // Auth state
   useEffect(() => {
@@ -434,7 +455,10 @@ export const SidePanel: React.FC = () => {
               </div>
 
               {/* Explanation Section */}
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+              <div 
+                className="bg-white rounded-lg border border-gray-200 shadow-sm p-6"
+                onMouseEnter={preloadActions}
+              >
                 {explanation.error ? (
                   <ErrorState error={explanation.error} onRetry={handleRetry} />
                 ) : explanation.response || explanation.isLoading ? (
@@ -447,6 +471,7 @@ export const SidePanel: React.FC = () => {
                   <div className="text-center py-8">
                     <button
                       onClick={handleExplain}
+                      onMouseEnter={preloadFollowUps}
                       data-testid="explain-button"
                       disabled={!rateLimiter.canAsk()}
                       className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"

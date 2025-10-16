@@ -33,7 +33,7 @@ interface StatsData {
   isPremium: boolean;
 }
 
-export function StatsWidget() {
+export default function StatsWidget() {
   const [stats, setStats] = useState<StatsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);

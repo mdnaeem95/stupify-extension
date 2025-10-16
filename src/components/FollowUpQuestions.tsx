@@ -2,8 +2,6 @@
  * Follow-Up Questions Component
  * Displays suggested follow-up questions after explanation
  */
-
-import React from 'react';
 import { Sparkles } from 'lucide-react';
 import { FollowUpQuestion } from '@/shared/sidepanel';
 
@@ -12,10 +10,7 @@ interface FollowUpQuestionsProps {
   onQuestionClick: (question: FollowUpQuestion) => void;
 }
 
-export const FollowUpQuestions: React.FC<FollowUpQuestionsProps> = ({
-  questions,
-  onQuestionClick,
-}) => {
+export default function FollowUpQuestions({ questions, onQuestionClick }: FollowUpQuestionsProps) {
   if (questions.length === 0) return null;
 
   return (

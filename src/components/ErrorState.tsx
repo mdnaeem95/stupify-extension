@@ -2,8 +2,6 @@
  * Error State Component
  * Displays error messages with retry option
  */
-
-import React from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 interface ErrorStateProps {
@@ -11,7 +9,7 @@ interface ErrorStateProps {
   onRetry?: () => void;
 }
 
-export const ErrorState: React.FC<ErrorStateProps> = ({ error, onRetry }) => {
+export default function ErrorState({ error, onRetry }: ErrorStateProps) {
   return (
     <div className="rounded-lg bg-red-50 border border-red-200 p-4">
       <div className="flex items-start gap-3">
